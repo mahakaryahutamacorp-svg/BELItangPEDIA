@@ -12,7 +12,7 @@ interface BannerSliderProps {
 
 export default function BannerSlider({
   banners,
-  autoPlayInterval = 5000
+  autoPlayInterval = 3000
 }: BannerSliderProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isTransitioning, setIsTransitioning] = useState(false)
