@@ -116,7 +116,7 @@ export default function BannerSlider({
                 .banner-container {
                     position: relative;
                     width: 100%;
-                    aspect-ratio: 16/9;
+                    aspect-ratio: 2/1;
                 }
 
                 @media (min-width: 768px) {
