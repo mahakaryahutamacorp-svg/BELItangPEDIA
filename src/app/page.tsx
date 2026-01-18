@@ -1,601 +1,387 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ChevronRight, Truck, Shield, Clock, Store } from 'lucide-react'
+import {
+  ChevronRight,
+  MapPin,
+  Star,
+  Truck,
+  Shield,
+  Clock,
+  Store,
+  Zap,
+  Heart,
+  ShoppingCart,
+  ArrowRight
+} from 'lucide-react'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import MobileNav from '@/components/layout/MobileNav'
 import ProductCard from '@/components/ui/ProductCard'
 import BannerSlider from '@/components/ui/BannerSlider'
 import CountdownTimer from '@/components/ui/CountdownTimer'
-import {
-    mockProducts,
-    mockCategories,
-    mockBanners,
-    mockFlashSale,
-    mockStores
-} from '@/lib/mockData'
+import { mockProducts, mockStores, mockCategories, mockBanners, flashSaleEndTime } from '@/lib/mockData'
 
 export default function HomePage() {
-    return (
-        <>
-            <Header />
-
-            <main className="main-content">
-                {/* Hero Banner */}
-                <section className="hero-section">
-                    <div className="container">
-                        <BannerSlider banners={mockBanners} />
-                    </div>
-                </section>
-
-                {/* USP Bar */}
-                <section className="usp-section">
-                    <div className="container">
-                        <div className="usp-grid">
-                            <div className="usp-item">
-                                <Truck size={24} />
-                                <div className="usp-content">
-                                    <strong>Pengiriman Cepat</strong>
-                                    <span>Sampai dalam 1-2 jam</span>
-                                </div>
-                            </div>
-                            <div className="usp-item">
-                                <Shield size={24} />
-                                <div className="usp-content">
-                                    <strong>Pembayaran Aman</strong>
-                                    <span>COD & Transfer</span>
-                                </div>
-                            </div>
-                            <div className="usp-item">
-                                <Clock size={24} />
-                                <div className="usp-content">
-                                    <strong>Buka 24 Jam</strong>
-                                    <span>Pesan kapan saja</span>
-                                </div>
-                            </div>
-                            <div className="usp-item">
-                                <Store size={24} />
-                                <div className="usp-content">
-                                    <strong>UMKM Lokal</strong>
-                                    <span>Dukung ekonomi daerah</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                {/* Categories */}
-                <section className="categories-section">
-                    <div className="container">
-                        <div className="section-header">
-                            <h2>Kategori</h2>
-                            <Link href="/categories" className="see-all">
-                                Lihat Semua <ChevronRight size={16} />
-                            </Link>
-                        </div>
-                        <div className="categories-grid">
-                            {mockCategories.map((category) => (
-                                <Link
-                                    key={category.id}
-                                    href={`/category/${category.slug}`}
-                                    className="category-item"
-                                >
-                                    <div className="category-icon">{category.icon}</div>
-                                    <span className="category-name">{category.name}</span>
-                                </Link>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-
-                {/* Flash Sale */}
-                <section className="flash-sale-section">
-                    <div className="container">
-                        <div className="flash-sale-header">
-                            <div className="flash-sale-title">
-                                <span className="flash-icon">⚡</span>
-                                <h2>Flash Sale</h2>
-                            </div>
-                            <CountdownTimer endTime={mockFlashSale.end_time} />
-                            <Link href="/flash-sale" className="see-all-btn">
-                                Lihat Semua
-                            </Link>
-                        </div>
-                        <div className="products-scroll">
-                            {mockFlashSale.products.map((item) => (
-                                item.product && (
-                                    <div key={item.product_id} className="product-scroll-item">
-                                        <ProductCard
-                                            product={{
-                                                ...item.product,
-                                                discount_price: item.flash_price,
-                                            }}
-                                        />
-                                        <div className="flash-progress">
-                                            <div
-                                                className="flash-progress-bar"
-                                                style={{ width: `${(item.sold / item.stock) * 100}%` }}
-                                            />
-                                            <span className="flash-sold">Terjual {item.sold}</span>
-                                        </div>
-                                    </div>
-                                )
-                            ))}
-                        </div>
-                    </div>
-                </section>
-
-                {/* Nearby Stores */}
-                <section className="stores-section">
-                    <div className="container">
-                        <div className="section-header">
-                            <h2>🏪 Toko Terdekat</h2>
-                            <Link href="/stores" className="see-all">
-                                Lihat Semua <ChevronRight size={16} />
-                            </Link>
-                        </div>
-                        <div className="stores-grid">
-                            {mockStores.map((store) => (
-                                <Link key={store.id} href={`/store/${store.id}`} className="store-card">
-                                    <div className="store-banner">
-                                        <img src={store.banner_url || ''} alt={store.name} />
-                                    </div>
-                                    <div className="store-info">
-                                        <img
-                                            src={store.logo_url || ''}
-                                            alt={store.name}
-                                            className="store-logo"
-                                        />
-                                        <div className="store-details">
-                                            <h3>
-                                                {store.name}
-                                                {store.is_verified && <span className="verified">✓</span>}
-                                            </h3>
-                                            <p className="store-meta">
-                                                ⭐ {store.rating} • {store.distance} km • {store.total_products} produk
-                                            </p>
-                                        </div>
-                                    </div>
-                                </Link>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-
-                {/* Best Sellers */}
-                <section className="products-section">
-                    <div className="container">
-                        <div className="section-header">
-                            <h2>🔥 Produk Terlaris</h2>
-                            <Link href="/products?sort=bestseller" className="see-all">
-                                Lihat Semua <ChevronRight size={16} />
-                            </Link>
-                        </div>
-                        <div className="products-grid">
-                            {mockProducts.slice(0, 8).map((product) => (
-                                <ProductCard key={product.id} product={product} />
-                            ))}
-                        </div>
-                    </div>
-                </section>
-
-                {/* New Products */}
-                <section className="products-section">
-                    <div className="container">
-                        <div className="section-header">
-                            <h2>✨ Produk Terbaru</h2>
-                            <Link href="/products?sort=newest" className="see-all">
-                                Lihat Semua <ChevronRight size={16} />
-                            </Link>
-                        </div>
-                        <div className="products-grid">
-                            {mockProducts.slice(0, 4).map((product) => (
-                                <ProductCard key={product.id} product={product} />
-                            ))}
-                        </div>
-                    </div>
-                </section>
-
-                {/* CTA Section */}
-                <section className="cta-section">
-                    <div className="container">
-                        <div className="cta-card">
-                            <div className="cta-content">
-                                <h2>Punya Usaha? Mulai Jual di BELItangPEDIA!</h2>
-                                <p>Jangkau lebih banyak pelanggan di Belitang dan sekitarnya. Gratis daftar, mulai jualan hari ini!</p>
-                                <Link href="/seller/register" className="btn btn-primary btn-lg">
-                                    Daftar Jadi Penjual
-                                </Link>
-                            </div>
-                            <div className="cta-image">
-                                🛍️
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            </main>
-
-            <Footer />
-            <MobileNav />
-
-            <style jsx>{`
-        .main-content {
-          min-height: 100vh;
-          padding-bottom: 80px;
-        }
-
-        @media (min-width: 768px) {
-          .main-content {
-            padding-bottom: 0;
-          }
-        }
-
-        .hero-section {
-          padding: var(--space-4) 0;
-        }
-
-        /* USP Section */
-        .usp-section {
-          padding: var(--space-4) 0;
-          background: var(--bg-primary);
-        }
-
-        .usp-grid {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: var(--space-4);
-        }
-
-        @media (min-width: 768px) {
-          .usp-grid {
-            grid-template-columns: repeat(4, 1fr);
-          }
-        }
-
-        .usp-item {
-          display: flex;
-          align-items: center;
-          gap: var(--space-3);
-          padding: var(--space-4);
-          background: var(--gray-50);
-          border-radius: var(--radius-lg);
-          color: var(--primary-600);
-        }
-
-        .usp-content {
-          display: flex;
-          flex-direction: column;
-        }
-
-        .usp-content strong {
-          font-size: var(--text-sm);
-          color: var(--text-primary);
-        }
-
-        .usp-content span {
-          font-size: var(--text-xs);
-          color: var(--text-secondary);
-        }
-
-        /* Section Headers */
-        .section-header {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          margin-bottom: var(--space-4);
-        }
-
-        .section-header h2 {
-          font-size: var(--text-xl);
-          font-weight: 700;
-          color: var(--text-primary);
-        }
-
-        .see-all {
-          display: flex;
-          align-items: center;
-          gap: var(--space-1);
-          font-size: var(--text-sm);
-          font-weight: 600;
-          color: var(--primary-600);
-        }
-
-        /* Categories Section */
-        .categories-section {
-          padding: var(--space-6) 0;
-          background: var(--bg-primary);
-        }
-
-        .categories-grid {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: var(--space-3);
-        }
-
-        @media (min-width: 768px) {
-          .categories-grid {
-            grid-template-columns: repeat(8, 1fr);
-          }
-        }
-
-        .category-item {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: var(--space-2);
-          padding: var(--space-3);
-          text-align: center;
-          text-decoration: none;
-          transition: all var(--transition-fast);
-        }
-
-        .category-item:hover {
-          transform: scale(1.05);
-        }
-
-        .category-icon {
-          width: 56px;
-          height: 56px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background: linear-gradient(135deg, var(--primary-100) 0%, var(--primary-50) 100%);
-          border-radius: var(--radius-xl);
-          font-size: 24px;
-          transition: all var(--transition-fast);
-        }
-
-        .category-item:hover .category-icon {
-          background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
-          box-shadow: var(--shadow-glow);
-        }
-
-        .category-name {
-          font-size: var(--text-xs);
-          font-weight: 500;
-          color: var(--text-secondary);
-        }
-
-        /* Flash Sale Section */
-        .flash-sale-section {
-          padding: var(--space-6) 0;
-          background: linear-gradient(135deg, var(--primary-500) 0%, var(--accent-red) 100%);
-        }
-
-        .flash-sale-header {
-          display: flex;
-          align-items: center;
-          gap: var(--space-4);
-          margin-bottom: var(--space-4);
-          flex-wrap: wrap;
-        }
-
-        .flash-sale-title {
-          display: flex;
-          align-items: center;
-          gap: var(--space-2);
-        }
-
-        .flash-icon {
-          font-size: 28px;
-          animation: pulse 1s ease infinite;
-        }
-
-        .flash-sale-title h2 {
-          color: white;
-          font-size: var(--text-xl);
-          font-weight: 700;
-        }
-
-        .see-all-btn {
-          margin-left: auto;
-          padding: var(--space-2) var(--space-4);
-          background: white;
-          color: var(--primary-600);
-          border-radius: var(--radius-lg);
-          font-size: var(--text-sm);
-          font-weight: 600;
-        }
-
-        .products-scroll {
-          display: flex;
-          gap: var(--space-4);
-          overflow-x: auto;
-          padding: var(--space-2);
-          margin: calc(var(--space-2) * -1);
-          scroll-snap-type: x mandatory;
-          -webkit-overflow-scrolling: touch;
-        }
-
-        .products-scroll::-webkit-scrollbar {
-          display: none;
-        }
-
-        .product-scroll-item {
-          min-width: 180px;
-          max-width: 180px;
-          scroll-snap-align: start;
-        }
-
-        @media (min-width: 768px) {
-          .product-scroll-item {
-            min-width: 200px;
-            max-width: 200px;
-          }
-        }
-
-        .flash-progress {
-          position: relative;
-          margin-top: var(--space-2);
-          height: 20px;
-          background: var(--gray-200);
-          border-radius: var(--radius-full);
-          overflow: hidden;
-        }
-
-        .flash-progress-bar {
-          position: absolute;
-          left: 0;
-          top: 0;
-          bottom: 0;
-          background: linear-gradient(90deg, var(--accent-red) 0%, var(--accent-pink) 100%);
-          border-radius: var(--radius-full);
-        }
-
-        .flash-sold {
-          position: absolute;
-          inset: 0;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 10px;
-          font-weight: 600;
-          color: var(--text-primary);
-        }
-
-        /* Stores Section */
-        .stores-section {
-          padding: var(--space-6) 0;
-          background: var(--bg-primary);
-        }
-
-        .stores-grid {
-          display: grid;
-          grid-template-columns: 1fr;
-          gap: var(--space-4);
-        }
-
-        @media (min-width: 768px) {
-          .stores-grid {
-            grid-template-columns: repeat(3, 1fr);
-          }
-        }
-
-        .store-card {
-          display: block;
-          background: var(--bg-primary);
-          border-radius: var(--radius-xl);
-          overflow: hidden;
-          box-shadow: var(--shadow-sm);
-          text-decoration: none;
-          transition: all var(--transition-base);
-        }
-
-        .store-card:hover {
-          transform: translateY(-4px);
-          box-shadow: var(--shadow-lg);
-        }
-
-        .store-banner {
-          height: 100px;
-          background: var(--gray-200);
-          overflow: hidden;
-        }
-
-        .store-banner img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-
-        .store-info {
-          display: flex;
-          align-items: center;
-          gap: var(--space-3);
-          padding: var(--space-4);
-          margin-top: -30px;
-          position: relative;
-        }
-
-        .store-logo {
-          width: 60px;
-          height: 60px;
-          border-radius: var(--radius-lg);
-          border: 3px solid white;
-          object-fit: cover;
-          background: white;
-          box-shadow: var(--shadow-md);
-        }
-
-        .store-details h3 {
-          font-size: var(--text-base);
-          font-weight: 600;
-          color: var(--text-primary);
-          display: flex;
-          align-items: center;
-          gap: var(--space-1);
-        }
-
-        .verified {
-          color: var(--secondary-500);
-          font-size: var(--text-xs);
-        }
-
-        .store-meta {
-          font-size: var(--text-xs);
-          color: var(--text-secondary);
-        }
-
-        /* Products Section */
-        .products-section {
-          padding: var(--space-6) 0;
-        }
-
-        .products-grid {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: var(--space-4);
-        }
-
-        @media (min-width: 768px) {
-          .products-grid {
-            grid-template-columns: repeat(4, 1fr);
-          }
-        }
-
-        /* CTA Section */
-        .cta-section {
-          padding: var(--space-8) 0;
-        }
-
-        .cta-card {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          background: linear-gradient(135deg, var(--secondary-500) 0%, var(--secondary-600) 100%);
-          border-radius: var(--radius-2xl);
-          padding: var(--space-8);
-          color: white;
-        }
-
-        .cta-content {
-          max-width: 500px;
-        }
-
-        .cta-content h2 {
-          font-size: var(--text-2xl);
-          font-weight: 700;
-          margin-bottom: var(--space-3);
-        }
-
-        .cta-content p {
-          font-size: var(--text-base);
-          opacity: 0.9;
-          margin-bottom: var(--space-4);
-        }
-
-        .cta-image {
-          font-size: 80px;
-          display: none;
-        }
-
-        @media (min-width: 768px) {
-          .cta-image {
-            display: block;
-          }
-        }
-      `}</style>
-        </>
-    )
+  const [mounted, setMounted] = useState(false)
+  const flashSaleProducts = mockProducts.slice(0, 6)
+  const bestsellerProducts = mockProducts.slice(0, 12)
+  const newProducts = mockProducts.slice(2, 14)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    return <HomePageSkeleton />
+  }
+
+  return (
+    <>
+      <Header />
+      <main>
+        {/* Hero Banner Slider */}
+        <section className="hero-section">
+          <BannerSlider banners={mockBanners} />
+        </section>
+
+        {/* Features Bar */}
+        <section className="container">
+          <div className="features-bar">
+            <div className="feature-item animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
+              <div className="feature-icon">🚚</div>
+              <div className="feature-text">
+                <h4>Pengiriman Cepat</h4>
+                <p>Sampai dalam 1-2 jam</p>
+              </div>
+            </div>
+            <div className="feature-item animate-fadeInUp" style={{ animationDelay: '0.2s' }}>
+              <div className="feature-icon">💰</div>
+              <div className="feature-text">
+                <h4>Pembayaran Aman</h4>
+                <p>COD & Transfer</p>
+              </div>
+            </div>
+            <div className="feature-item animate-fadeInUp" style={{ animationDelay: '0.3s' }}>
+              <div className="feature-icon">🕐</div>
+              <div className="feature-text">
+                <h4>Buka 24 Jam</h4>
+                <p>Pesan kapan saja</p>
+              </div>
+            </div>
+            <div className="feature-item animate-fadeInUp" style={{ animationDelay: '0.4s' }}>
+              <div className="feature-icon">🏪</div>
+              <div className="feature-text">
+                <h4>UMKM Lokal</h4>
+                <p>Dukung ekonomi daerah</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Categories */}
+        <section className="section container">
+          <div className="section-header">
+            <h2 className="section-title">Kategori</h2>
+            <Link href="/categories" className="section-link">
+              Lihat Semua <ChevronRight size={16} />
+            </Link>
+          </div>
+          <div className="category-grid">
+            {mockCategories.map((category, index) => (
+              <Link
+                href={`/category/${category.slug}`}
+                key={category.id}
+                className="category-item animate-fadeInUp"
+                style={{ animationDelay: `${index * 0.05}s` }}
+              >
+                <div className="category-icon">{category.icon}</div>
+                <span className="category-name">{category.name}</span>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {/* Flash Sale */}
+        <section className="section container">
+          <div className="flash-sale">
+            <div className="flash-sale-header">
+              <h2 className="flash-sale-title">
+                <Zap size={24} />
+                <span>⚡</span> Flash Sale
+              </h2>
+              <div className="flash-countdown">
+                <span className="countdown-label">Berakhir dalam</span>
+                <CountdownTimer targetDate={flashSaleEndTime} />
+              </div>
+            </div>
+            <div className="product-grid">
+              {flashSaleProducts.map((product, index) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  showDiscount
+                  animationDelay={index * 0.1}
+                />
+              ))}
+            </div>
+            <div style={{ textAlign: 'center', marginTop: 'var(--space-6)' }}>
+              <Link href="/flash-sale" className="btn btn-primary">
+                Lihat Semua Flash Sale <ArrowRight size={18} />
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* Nearby Stores */}
+        <section className="section container">
+          <div className="section-header">
+            <h2 className="section-title">🏪 Toko Terdekat</h2>
+            <Link href="/stores" className="section-link">
+              Lihat Semua <ChevronRight size={16} />
+            </Link>
+          </div>
+          <div className="stores-scroll hide-scrollbar">
+            {mockStores.map((store, index) => (
+              <Link
+                href={`/store/${store.id}`}
+                key={store.id}
+                className="store-card animate-fadeInUp"
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
+                <div className="store-logo">
+                  <img src={store.logo_url || 'https://via.placeholder.com/48'} alt={store.name} />
+                </div>
+                <div className="store-info">
+                  <h4 className="store-name">{store.name}</h4>
+                  <div className="store-location">
+                    <MapPin size={12} />
+                    <span>{store.distance} km</span>
+                    <span>•</span>
+                    <Star size={12} fill="currentColor" />
+                    <span>{store.rating}</span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          <style jsx>{`
+                        .stores-scroll {
+                            display: flex;
+                            gap: var(--space-4);
+                            overflow-x: auto;
+                            padding-bottom: var(--space-2);
+                        }
+                        .stores-scroll .store-card {
+                            flex-shrink: 0;
+                            min-width: 220px;
+                        }
+                    `}</style>
+        </section>
+
+        {/* Bestsellers */}
+        <section className="section container">
+          <div className="section-header">
+            <h2 className="section-title">🔥 Produk Terlaris</h2>
+            <Link href="/products?sort=bestseller" className="section-link">
+              Lihat Semua <ChevronRight size={16} />
+            </Link>
+          </div>
+          <div className="product-grid">
+            {bestsellerProducts.map((product, index) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                showBadge="bestseller"
+                animationDelay={index * 0.05}
+              />
+            ))}
+          </div>
+        </section>
+
+        {/* Promo Banner */}
+        <section className="container" style={{ marginBottom: 'var(--space-8)' }}>
+          <div className="promo-banner">
+            <div className="promo-content">
+              <h3>Mulai Berjualan Sekarang!</h3>
+              <p>Buka toko gratis dan jangkau ribuan pelanggan di Belitang</p>
+              <Link href="/seller" className="btn btn-primary">
+                Daftar Jadi Seller <ArrowRight size={18} />
+              </Link>
+            </div>
+            <div className="promo-image">
+              <span>🛍️</span>
+            </div>
+          </div>
+
+          <style jsx>{`
+                        .promo-banner {
+                            display: flex;
+                            align-items: center;
+                            justify-content: space-between;
+                            padding: var(--space-8);
+                            background: linear-gradient(135deg, var(--secondary-500) 0%, var(--secondary-600) 100%);
+                            border-radius: var(--radius-2xl);
+                            color: white;
+                            overflow: hidden;
+                        }
+                        .promo-content h3 {
+                            font-family: var(--font-display);
+                            font-size: var(--text-2xl);
+                            font-weight: 700;
+                            margin-bottom: var(--space-2);
+                        }
+                        .promo-content p {
+                            opacity: 0.9;
+                            margin-bottom: var(--space-6);
+                        }
+                        .promo-image {
+                            font-size: 80px;
+                            animation: float 3s ease-in-out infinite;
+                        }
+                        @media (max-width: 768px) {
+                            .promo-banner {
+                                flex-direction: column;
+                                text-align: center;
+                                padding: var(--space-6);
+                            }
+                            .promo-image {
+                                order: -1;
+                                margin-bottom: var(--space-4);
+                                font-size: 60px;
+                            }
+                        }
+                    `}</style>
+        </section>
+
+        {/* New Arrivals */}
+        <section className="section container">
+          <div className="section-header">
+            <h2 className="section-title">✨ Produk Terbaru</h2>
+            <Link href="/products?sort=newest" className="section-link">
+              Lihat Semua <ChevronRight size={16} />
+            </Link>
+          </div>
+          <div className="product-grid">
+            {newProducts.map((product, index) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                showBadge="new"
+                animationDelay={index * 0.05}
+              />
+            ))}
+          </div>
+        </section>
+
+        {/* Trust Section */}
+        <section className="trust-section">
+          <div className="container">
+            <h2 className="section-title" style={{ textAlign: 'center', marginBottom: 'var(--space-8)' }}>
+              Mengapa Belanja di BELItangPEDIA?
+            </h2>
+            <div className="trust-grid">
+              <div className="trust-item">
+                <div className="trust-icon">🛡️</div>
+                <h4>100% Aman</h4>
+                <p>Transaksi terjamin dengan sistem COD</p>
+              </div>
+              <div className="trust-item">
+                <div className="trust-icon">⭐</div>
+                <h4>Produk Berkualitas</h4>
+                <p>Dari seller terpercaya di Belitang</p>
+              </div>
+              <div className="trust-item">
+                <div className="trust-icon">🚀</div>
+                <h4>Pengiriman Kilat</h4>
+                <p>Sampai dalam hitungan jam</p>
+              </div>
+              <div className="trust-item">
+                <div className="trust-icon">💬</div>
+                <h4>Dukungan 24/7</h4>
+                <p>Tim support siap membantu</p>
+              </div>
+            </div>
+          </div>
+
+          <style jsx>{`
+                        .trust-section {
+                            background: var(--bg-gradient-soft);
+                            padding: var(--space-12) 0;
+                        }
+                        .trust-grid {
+                            display: grid;
+                            grid-template-columns: repeat(2, 1fr);
+                            gap: var(--space-6);
+                        }
+                        @media (min-width: 768px) {
+                            .trust-grid {
+                                grid-template-columns: repeat(4, 1fr);
+                            }
+                        }
+                        .trust-item {
+                            text-align: center;
+                        }
+                        .trust-icon {
+                            font-size: 48px;
+                            margin-bottom: var(--space-3);
+                        }
+                        .trust-item h4 {
+                            font-size: var(--text-base);
+                            font-weight: 600;
+                            margin-bottom: var(--space-2);
+                        }
+                        .trust-item p {
+                            font-size: var(--text-sm);
+                            color: var(--text-secondary);
+                        }
+                    `}</style>
+        </section>
+      </main>
+      <Footer />
+      <MobileNav />
+    </>
+  )
+}
+
+// Skeleton Loading Component
+function HomePageSkeleton() {
+  return (
+    <>
+      <Header />
+      <main>
+        {/* Banner Skeleton */}
+        <div className="container" style={{ paddingTop: 'var(--space-4)' }}>
+          <div className="skeleton skeleton-image" style={{ borderRadius: 'var(--radius-2xl)', height: '300px' }} />
+        </div>
+
+        {/* Features Skeleton */}
+        <div className="container" style={{ marginTop: 'var(--space-6)' }}>
+          <div className="features-bar">
+            {[1, 2, 3, 4].map(i => (
+              <div key={i} className="skeleton" style={{ height: '80px', borderRadius: 'var(--radius-xl)' }} />
+            ))}
+          </div>
+        </div>
+
+        {/* Products Skeleton */}
+        <div className="container section">
+          <div className="skeleton skeleton-title" style={{ width: '200px', height: '32px', marginBottom: 'var(--space-6)' }} />
+          <div className="product-grid">
+            {[1, 2, 3, 4, 5, 6].map(i => (
+              <div key={i} className="card">
+                <div className="skeleton skeleton-image" />
+                <div style={{ padding: 'var(--space-4)' }}>
+                  <div className="skeleton skeleton-text" />
+                  <div className="skeleton skeleton-text" style={{ width: '60%' }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </main>
+    </>
+  )
 }

@@ -1,116 +1,204 @@
 'use client'
 
-import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Search, ShoppingCart, User, Store } from 'lucide-react'
+import Link from 'next/link'
+import { Home, Search, ShoppingCart, User, LayoutGrid } from 'lucide-react'
 import { useCartStore } from '@/store/cartStore'
+import { useAuthStore } from '@/store/authStore'
 
 export default function MobileNav() {
-    const pathname = usePathname()
-    const cartItemCount = useCartStore((state) => state.getTotalItems())
+  const pathname = usePathname()
+  const cartItemCount = useCartStore((state) => state.getTotalItems())
+  const { isAuthenticated } = useAuthStore()
 
-    const navItems = [
-        { href: '/', icon: Home, label: 'Beranda' },
-        { href: '/products', icon: Search, label: 'Cari' },
-        { href: '/cart', icon: ShoppingCart, label: 'Keranjang', badge: cartItemCount },
-        { href: '/seller', icon: Store, label: 'Toko' },
-        { href: '/profile', icon: User, label: 'Akun' },
-    ]
+  const navItems = [
+    {
+      href: '/',
+      icon: Home,
+      label: 'Beranda',
+      isActive: pathname === '/'
+    },
+    {
+      href: '/search',
+      icon: Search,
+      label: 'Cari',
+      isActive: pathname === '/search'
+    },
+    {
+      href: '/cart',
+      icon: ShoppingCart,
+      label: 'Keranjang',
+      isActive: pathname === '/cart',
+      isCart: true
+    },
+    {
+      href: '/categories',
+      icon: LayoutGrid,
+      label: 'Toko',
+      isActive: pathname === '/categories'
+    },
+    {
+      href: isAuthenticated ? '/profile' : '/auth/login',
+      icon: User,
+      label: 'Akun',
+      isActive: pathname.startsWith('/profile') || pathname.startsWith('/auth')
+    }
+  ]
 
-    return (
-        <nav className="mobile-nav">
-            {navItems.map((item) => {
-                const Icon = item.icon
-                const isActive = pathname === item.href
+  return (
+    <nav className="mobile-nav">
+      {navItems.map((item) => {
+        const Icon = item.icon
 
-                return (
-                    <Link
-                        key={item.href}
-                        href={item.href}
-                        className={`mobile-nav-item ${isActive ? 'active' : ''}`}
-                    >
-                        <div className="nav-icon-wrapper">
-                            <Icon size={22} />
-                            {item.badge !== undefined && item.badge > 0 && (
-                                <span className="nav-badge">{item.badge > 99 ? '99+' : item.badge}</span>
-                            )}
-                        </div>
-                        <span className="nav-label">{item.label}</span>
-                    </Link>
-                )
-            })}
-
-            <style jsx>{`
-        .mobile-nav {
-          position: fixed;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          z-index: var(--z-sticky);
-          display: flex;
-          justify-content: space-around;
-          align-items: center;
-          background: var(--bg-primary);
-          padding: var(--space-2) 0;
-          padding-bottom: calc(var(--space-2) + env(safe-area-inset-bottom, 0px));
-          box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
-          border-top: 1px solid var(--gray-100);
+        if (item.isCart) {
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="mobile-nav-cart"
+            >
+              <Icon size={24} />
+              {cartItemCount > 0 && (
+                <span className="mobile-nav-badge">
+                  {cartItemCount > 99 ? '99+' : cartItemCount}
+                </span>
+              )}
+            </Link>
+          )
         }
 
-        @media (min-width: 768px) {
-          .mobile-nav {
-            display: none;
-          }
-        }
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            className={`mobile-nav-item ${item.isActive ? 'active' : ''}`}
+          >
+            <Icon size={22} />
+            <span>{item.label}</span>
+          </Link>
+        )
+      })}
 
-        .mobile-nav-item {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: var(--space-1);
-          padding: var(--space-1) var(--space-3);
-          color: var(--text-tertiary);
-          text-decoration: none;
-          transition: color var(--transition-fast);
-        }
+      <style jsx>{`
+                .mobile-nav {
+                    position: fixed;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    height: 70px;
+                    background: var(--bg-primary);
+                    border-top: 1px solid var(--border-light);
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-around;
+                    padding: 0 var(--space-2);
+                    z-index: var(--z-fixed);
+                    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+                }
 
-        .mobile-nav-item:active {
-          transform: scale(0.95);
-        }
+                @media (min-width: 768px) {
+                    .mobile-nav {
+                        display: none;
+                    }
+                }
 
-        .mobile-nav-item.active {
-          color: var(--primary-600);
-        }
+                .mobile-nav-item {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    gap: 4px;
+                    padding: var(--space-2) var(--space-3);
+                    color: var(--text-tertiary);
+                    transition: all var(--transition-fast);
+                    position: relative;
+                    border-radius: var(--radius-xl);
+                }
 
-        .nav-icon-wrapper {
-          position: relative;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
+                .mobile-nav-item:hover {
+                    color: var(--primary-600);
+                }
 
-        .nav-badge {
-          position: absolute;
-          top: -6px;
-          right: -10px;
-          min-width: 18px;
-          height: 18px;
-          padding: 0 5px;
-          background: var(--accent-red);
-          color: white;
-          font-size: 10px;
-          font-weight: 700;
-          border-radius: var(--radius-full);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
+                .mobile-nav-item.active {
+                    color: var(--primary-600);
+                }
 
-        .nav-label {
-          font-size: 10px;
-          font-weight: 500;
-        }
-      `}</style>
-        </nav>
-    )
+                .mobile-nav-item.active::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    width: 20px;
+                    height: 3px;
+                    background: var(--primary-500);
+                    border-radius: 0 0 var(--radius-full) var(--radius-full);
+                }
+
+                .mobile-nav-item span {
+                    font-size: 10px;
+                    font-weight: 600;
+                }
+
+                .mobile-nav-cart {
+                    position: relative;
+                    width: 56px;
+                    height: 56px;
+                    background: var(--bg-gradient);
+                    border-radius: var(--radius-full);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: white;
+                    margin-top: -24px;
+                    box-shadow: 0 4px 15px rgba(249, 115, 22, 0.4);
+                    transition: all var(--transition-fast);
+                }
+
+                .mobile-nav-cart:hover {
+                    transform: scale(1.05);
+                    box-shadow: 0 6px 20px rgba(249, 115, 22, 0.5);
+                }
+
+                .mobile-nav-cart:active {
+                    transform: scale(0.95);
+                }
+
+                .mobile-nav-badge {
+                    position: absolute;
+                    top: -4px;
+                    right: -4px;
+                    min-width: 20px;
+                    height: 20px;
+                    background: var(--accent-red);
+                    color: white;
+                    font-size: 11px;
+                    font-weight: 700;
+                    border-radius: var(--radius-full);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 0 5px;
+                    border: 2px solid var(--bg-primary);
+                    animation: bounce 0.5s ease;
+                }
+
+                @keyframes bounce {
+                    0%, 100% {
+                        transform: scale(1);
+                    }
+                    50% {
+                        transform: scale(1.2);
+                    }
+                }
+
+                /* Safe area for iOS */
+                @supports (padding-bottom: env(safe-area-inset-bottom)) {
+                    .mobile-nav {
+                        padding-bottom: env(safe-area-inset-bottom);
+                        height: calc(70px + env(safe-area-inset-bottom));
+                    }
+                }
+            `}</style>
+    </nav>
+  )
 }

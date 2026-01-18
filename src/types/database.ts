@@ -13,30 +13,30 @@ export interface Database {
                 Row: {
                     id: string
                     email: string
-                    name: string
+                    full_name: string
                     phone: string | null
                     avatar_url: string | null
-                    is_seller: boolean
+                    role: 'buyer' | 'seller' | 'admin'
                     created_at: string
                     updated_at: string
                 }
                 Insert: {
                     id?: string
                     email: string
-                    name: string
+                    full_name: string
                     phone?: string | null
                     avatar_url?: string | null
-                    is_seller?: boolean
+                    role?: 'buyer' | 'seller' | 'admin'
                     created_at?: string
                     updated_at?: string
                 }
                 Update: {
                     id?: string
                     email?: string
-                    name?: string
+                    full_name?: string
                     phone?: string | null
                     avatar_url?: string | null
-                    is_seller?: boolean
+                    role?: 'buyer' | 'seller' | 'admin'
                     updated_at?: string
                 }
             }

@@ -1,255 +1,385 @@
+'use client'
+
 import Link from 'next/link'
-import {
-    Facebook,
-    Instagram,
-    Twitter,
-    Mail,
-    Phone,
-    MapPin
-} from 'lucide-react'
+import { MapPin, Phone, Mail, Facebook, Instagram, MessageCircle, ArrowRight } from 'lucide-react'
 
 export default function Footer() {
-    return (
-        <footer className="footer">
-            <div className="container">
-                <div className="footer-grid">
-                    {/* Brand */}
-                    <div className="footer-brand">
-                        <Link href="/" className="footer-logo">
-                            <span className="logo-icon">🛒</span>
-                            <span className="logo-text">
-                                <span className="logo-beli">BELI</span>
-                                <span className="logo-tang">tang</span>
-                                <span className="logo-pedia">PEDIA</span>
-                            </span>
-                        </Link>
-                        <p className="footer-tagline">
-                            Marketplace lokal untuk masyarakat Belitang dan sekitarnya.
-                            Dukung UMKM lokal, belanja cepat sampai!
-                        </p>
-                        <div className="footer-social">
-                            <a href="#" aria-label="Facebook"><Facebook size={20} /></a>
-                            <a href="#" aria-label="Instagram"><Instagram size={20} /></a>
-                            <a href="#" aria-label="Twitter"><Twitter size={20} /></a>
-                        </div>
-                    </div>
+  const currentYear = new Date().getFullYear()
 
-                    {/* Quick Links */}
-                    <div className="footer-section">
-                        <h4>Belanja</h4>
-                        <ul>
-                            <li><Link href="/products">Semua Produk</Link></li>
-                            <li><Link href="/flash-sale">Flash Sale</Link></li>
-                            <li><Link href="/stores">Toko Terdekat</Link></li>
-                            <li><Link href="/category/makanan">Makanan</Link></li>
-                            <li><Link href="/category/elektronik">Elektronik</Link></li>
-                        </ul>
-                    </div>
+  return (
+    <footer className="footer">
+      {/* Newsletter Section */}
+      <div className="newsletter-section">
+        <div className="container">
+          <div className="newsletter-content">
+            <div className="newsletter-text">
+              <h3>Dapatkan Promo Menarik!</h3>
+              <p>Daftar newsletter untuk info promo dan produk terbaru</p>
+            </div>
+            <form className="newsletter-form">
+              <input
+                type="email"
+                placeholder="Masukkan email Anda"
+                required
+              />
+              <button type="submit" className="btn btn-primary">
+                <span className="hide-mobile">Berlangganan</span>
+                <ArrowRight size={18} className="show-mobile" />
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
 
-                    {/* Seller */}
-                    <div className="footer-section">
-                        <h4>Jual di BELItangPEDIA</h4>
-                        <ul>
-                            <li><Link href="/seller/register">Daftar Jadi Penjual</Link></li>
-                            <li><Link href="/seller">Seller Center</Link></li>
-                            <li><Link href="/help/seller">Panduan Berjualan</Link></li>
-                            <li><Link href="/help/shipping">Pengiriman Lokal</Link></li>
-                        </ul>
-                    </div>
-
-                    {/* Help */}
-                    <div className="footer-section">
-                        <h4>Bantuan</h4>
-                        <ul>
-                            <li><Link href="/help">Pusat Bantuan</Link></li>
-                            <li><Link href="/help/order">Cara Pesan</Link></li>
-                            <li><Link href="/help/payment">Pembayaran COD</Link></li>
-                            <li><Link href="/help/return">Pengembalian</Link></li>
-                            <li><Link href="/contact">Hubungi Kami</Link></li>
-                        </ul>
-                    </div>
-
-                    {/* Contact */}
-                    <div className="footer-section">
-                        <h4>Hubungi Kami</h4>
-                        <ul className="footer-contact">
-                            <li>
-                                <MapPin size={16} />
-                                <span>Belitang, OKU Timur, Sumatera Selatan</span>
-                            </li>
-                            <li>
-                                <Phone size={16} />
-                                <span>0812-3456-7890</span>
-                            </li>
-                            <li>
-                                <Mail size={16} />
-                                <span>halo@belitangpedia.id</span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div className="footer-bottom">
-                    <div className="footer-copyright">
-                        <p>&copy; 2024 BELItangPEDIA. Hak Cipta Dilindungi.</p>
-                    </div>
-                    <div className="footer-links">
-                        <Link href="/terms">Syarat & Ketentuan</Link>
-                        <Link href="/privacy">Kebijakan Privasi</Link>
-                    </div>
-                </div>
+      {/* Main Footer */}
+      <div className="footer-main">
+        <div className="container">
+          <div className="footer-grid">
+            {/* Brand */}
+            <div className="footer-brand">
+              <Link href="/" className="footer-logo">
+                <span className="logo-icon">🛒</span>
+                <span className="logo-text">
+                  <span className="logo-beli">BELI</span>
+                  <span className="logo-tang">tang</span>
+                  <span className="logo-pedia">PEDIA</span>
+                </span>
+              </Link>
+              <p className="footer-tagline">
+                Marketplace lokal untuk masyarakat Belitang dan sekitarnya. Dukung UMKM lokal, belanja cepat sampai!
+              </p>
+              <div className="footer-social">
+                <a href="#" className="social-link" aria-label="Facebook">
+                  <Facebook size={20} />
+                </a>
+                <a href="#" className="social-link" aria-label="Instagram">
+                  <Instagram size={20} />
+                </a>
+                <a href="#" className="social-link whatsapp" aria-label="WhatsApp">
+                  <MessageCircle size={20} />
+                </a>
+              </div>
             </div>
 
-            <style jsx>{`
-        .footer {
-          background: var(--gray-900);
-          color: var(--gray-300);
-          padding: var(--space-16) 0 var(--space-8);
-          margin-top: var(--space-16);
-        }
+            {/* Quick Links */}
+            <div className="footer-links">
+              <h4>Jelajahi</h4>
+              <ul>
+                <li><Link href="/products">Semua Produk</Link></li>
+                <li><Link href="/categories">Kategori</Link></li>
+                <li><Link href="/flash-sale">Flash Sale</Link></li>
+                <li><Link href="/stores">Toko Terdekat</Link></li>
+              </ul>
+            </div>
 
-        .footer-grid {
-          display: grid;
-          grid-template-columns: 1fr;
-          gap: var(--space-8);
-        }
+            {/* Seller */}
+            <div className="footer-links">
+              <h4>Seller</h4>
+              <ul>
+                <li><Link href="/seller">Mulai Berjualan</Link></li>
+                <li><Link href="/seller/register">Daftar Seller</Link></li>
+                <li><Link href="/seller/guide">Panduan Seller</Link></li>
+                <li><Link href="/seller/fees">Biaya Layanan</Link></li>
+              </ul>
+            </div>
 
-        @media (min-width: 768px) {
-          .footer-grid {
-            grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
-          }
-        }
+            {/* Help */}
+            <div className="footer-links">
+              <h4>Bantuan</h4>
+              <ul>
+                <li><Link href="/help">Pusat Bantuan</Link></li>
+                <li><Link href="/faq">FAQ</Link></li>
+                <li><Link href="/terms">Syarat & Ketentuan</Link></li>
+                <li><Link href="/privacy">Kebijakan Privasi</Link></li>
+              </ul>
+            </div>
 
-        .footer-brand {
-          max-width: 300px;
-        }
+            {/* Contact */}
+            <div className="footer-contact">
+              <h4>Hubungi Kami</h4>
+              <ul>
+                <li>
+                  <MapPin size={16} />
+                  <span>Belitang, OKU Timur<br />Sumatera Selatan</span>
+                </li>
+                <li>
+                  <Phone size={16} />
+                  <span>0812-3456-7890</span>
+                </li>
+                <li>
+                  <Mail size={16} />
+                  <span>hello@belitang.com</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
 
-        .footer-logo {
-          display: flex;
-          align-items: center;
-          gap: var(--space-2);
-          margin-bottom: var(--space-4);
-        }
+      {/* Footer Bottom */}
+      <div className="footer-bottom">
+        <div className="container">
+          <p>© {currentYear} BELItangPEDIA. Semua hak dilindungi.</p>
+          <div className="payment-methods">
+            <span>💳</span>
+            <span>💵</span>
+            <span>🏦</span>
+          </div>
+        </div>
+      </div>
 
-        .logo-icon {
-          font-size: 32px;
-        }
+      <style jsx>{`
+                .footer {
+                    background: var(--gray-900);
+                    color: var(--gray-300);
+                    margin-top: auto;
+                }
 
-        .logo-text {
-          font-family: var(--font-display);
-          font-weight: 800;
-          font-size: var(--text-xl);
-        }
+                .newsletter-section {
+                    background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
+                    padding: var(--space-8) 0;
+                }
 
-        .logo-beli {
-          color: var(--primary-500);
-        }
+                .newsletter-content {
+                    display: flex;
+                    flex-direction: column;
+                    gap: var(--space-4);
+                    text-align: center;
+                }
 
-        .logo-tang {
-          color: var(--gray-400);
-          font-weight: 400;
-        }
+                @media (min-width: 768px) {
+                    .newsletter-content {
+                        flex-direction: row;
+                        align-items: center;
+                        justify-content: space-between;
+                        text-align: left;
+                    }
+                }
 
-        .logo-pedia {
-          color: var(--secondary-500);
-        }
+                .newsletter-text h3 {
+                    font-family: var(--font-display);
+                    font-size: var(--text-xl);
+                    font-weight: 700;
+                    color: white;
+                    margin-bottom: var(--space-1);
+                }
 
-        .footer-tagline {
-          font-size: var(--text-sm);
-          line-height: 1.6;
-          margin-bottom: var(--space-4);
-        }
+                .newsletter-text p {
+                    color: var(--primary-100);
+                    font-size: var(--text-sm);
+                }
 
-        .footer-social {
-          display: flex;
-          gap: var(--space-3);
-        }
+                .newsletter-form {
+                    display: flex;
+                    gap: var(--space-2);
+                    width: 100%;
+                    max-width: 400px;
+                }
 
-        .footer-social a {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 40px;
-          height: 40px;
-          background: var(--gray-800);
-          border-radius: var(--radius-md);
-          color: var(--gray-400);
-          transition: all var(--transition-fast);
-        }
+                @media (min-width: 768px) {
+                    .newsletter-form {
+                        width: auto;
+                    }
+                }
 
-        .footer-social a:hover {
-          background: var(--primary-600);
-          color: white;
-        }
+                .newsletter-form input {
+                    flex: 1;
+                    padding: var(--space-3) var(--space-4);
+                    border: none;
+                    border-radius: var(--radius-xl);
+                    font-size: var(--text-sm);
+                    background: white;
+                }
 
-        .footer-section h4 {
-          color: white;
-          font-size: var(--text-base);
-          font-weight: 600;
-          margin-bottom: var(--space-4);
-        }
+                .newsletter-form input:focus {
+                    outline: 2px solid var(--primary-300);
+                }
 
-        .footer-section ul {
-          list-style: none;
-        }
+                .newsletter-form .btn {
+                    flex-shrink: 0;
+                }
 
-        .footer-section li {
-          margin-bottom: var(--space-2);
-        }
+                .footer-main {
+                    padding: var(--space-12) 0;
+                }
 
-        .footer-section a {
-          color: var(--gray-400);
-          font-size: var(--text-sm);
-          transition: color var(--transition-fast);
-        }
+                .footer-grid {
+                    display: grid;
+                    grid-template-columns: 1fr;
+                    gap: var(--space-8);
+                }
 
-        .footer-section a:hover {
-          color: var(--primary-500);
-        }
+                @media (min-width: 640px) {
+                    .footer-grid {
+                        grid-template-columns: repeat(2, 1fr);
+                    }
+                }
 
-        .footer-contact li {
-          display: flex;
-          align-items: flex-start;
-          gap: var(--space-2);
-          font-size: var(--text-sm);
-        }
+                @media (min-width: 1024px) {
+                    .footer-grid {
+                        grid-template-columns: 2fr 1fr 1fr 1fr 1.5fr;
+                        gap: var(--space-10);
+                    }
+                }
 
-        .footer-bottom {
-          display: flex;
-          flex-direction: column;
-          gap: var(--space-4);
-          padding-top: var(--space-8);
-          margin-top: var(--space-8);
-          border-top: 1px solid var(--gray-800);
-        }
+                .footer-logo {
+                    display: flex;
+                    align-items: center;
+                    gap: var(--space-2);
+                    margin-bottom: var(--space-4);
+                }
 
-        @media (min-width: 768px) {
-          .footer-bottom {
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-          }
-        }
+                .logo-icon {
+                    font-size: 36px;
+                }
 
-        .footer-copyright p {
-          font-size: var(--text-sm);
-          color: var(--gray-500);
-        }
+                .logo-text {
+                    font-family: var(--font-display);
+                    font-weight: 800;
+                    font-size: var(--text-xl);
+                }
 
-        .footer-links {
-          display: flex;
-          gap: var(--space-6);
-        }
+                .logo-beli {
+                    color: var(--primary-400);
+                }
 
-        .footer-links a {
-          font-size: var(--text-sm);
-          color: var(--gray-500);
-        }
+                .logo-tang {
+                    color: var(--gray-400);
+                    font-weight: 400;
+                }
 
-        .footer-links a:hover {
-          color: var(--primary-500);
-        }
-      `}</style>
-        </footer>
-    )
+                .logo-pedia {
+                    color: var(--secondary-400);
+                }
+
+                .footer-tagline {
+                    font-size: var(--text-sm);
+                    line-height: 1.7;
+                    margin-bottom: var(--space-6);
+                    color: var(--gray-400);
+                }
+
+                .footer-social {
+                    display: flex;
+                    gap: var(--space-3);
+                }
+
+                .social-link {
+                    width: 40px;
+                    height: 40px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background: var(--gray-800);
+                    border-radius: var(--radius-lg);
+                    color: var(--gray-400);
+                    transition: all var(--transition-fast);
+                }
+
+                .social-link:hover {
+                    background: var(--primary-600);
+                    color: white;
+                    transform: translateY(-2px);
+                }
+
+                .social-link.whatsapp:hover {
+                    background: #25D366;
+                }
+
+                .footer-links h4,
+                .footer-contact h4 {
+                    font-size: var(--text-sm);
+                    font-weight: 600;
+                    color: white;
+                    margin-bottom: var(--space-4);
+                    text-transform: uppercase;
+                    letter-spacing: 0.05em;
+                }
+
+                .footer-links ul {
+                    display: flex;
+                    flex-direction: column;
+                    gap: var(--space-3);
+                }
+
+                .footer-links a {
+                    font-size: var(--text-sm);
+                    color: var(--gray-400);
+                    transition: color var(--transition-fast);
+                }
+
+                .footer-links a:hover {
+                    color: var(--primary-400);
+                }
+
+                .footer-contact ul {
+                    display: flex;
+                    flex-direction: column;
+                    gap: var(--space-4);
+                }
+
+                .footer-contact li {
+                    display: flex;
+                    align-items: flex-start;
+                    gap: var(--space-3);
+                    font-size: var(--text-sm);
+                    color: var(--gray-400);
+                }
+
+                .footer-contact li svg {
+                    flex-shrink: 0;
+                    margin-top: 2px;
+                    color: var(--primary-500);
+                }
+
+                .footer-bottom {
+                    border-top: 1px solid var(--gray-800);
+                    padding: var(--space-6) 0;
+                }
+
+                .footer-bottom .container {
+                    display: flex;
+                    flex-direction: column;
+                    gap: var(--space-4);
+                    align-items: center;
+                    text-align: center;
+                }
+
+                @media (min-width: 768px) {
+                    .footer-bottom .container {
+                        flex-direction: row;
+                        justify-content: space-between;
+                    }
+                }
+
+                .footer-bottom p {
+                    font-size: var(--text-sm);
+                    color: var(--gray-500);
+                }
+
+                .payment-methods {
+                    display: flex;
+                    gap: var(--space-2);
+                    font-size: 24px;
+                }
+
+                .hide-mobile {
+                    display: none;
+                }
+
+                .show-mobile {
+                    display: block;
+                }
+
+                @media (min-width: 768px) {
+                    .hide-mobile {
+                        display: block;
+                    }
+                    .show-mobile {
+                        display: none;
+                    }
+                }
+            `}</style>
+    </footer>
+  )
 }

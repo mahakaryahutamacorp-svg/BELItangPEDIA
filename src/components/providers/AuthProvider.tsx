@@ -72,11 +72,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }, [storeLogout])
 
     const fetchUserProfile = async (userId: string) => {
-        const { data: profile } = await supabase
+        const { data } = await supabase
             .from('users')
             .select('*')
             .eq('id', userId)
             .single()
+
+        // Cast to any to avoid TypeScript errors with Supabase types
+        const profile = data as {
+            id: string
+            email: string
+            full_name: string
+            phone: string
+            avatar_url: string | null
+            role: string
+            created_at: string
+        } | null
 
         if (profile) {
             setStoreUser({
@@ -85,7 +96,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 full_name: profile.full_name || '',
                 phone: profile.phone || '',
                 avatar_url: profile.avatar_url || null,
-                role: profile.role || 'buyer',
+                role: (profile.role as 'buyer' | 'seller' | 'admin') || 'buyer',
                 created_at: profile.created_at || new Date().toISOString(),
             })
         }
@@ -113,7 +124,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         if (!error && data.user) {
             // Create user profile in database
-            await supabase.from('users').insert({
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            await (supabase.from('users') as any).insert({
                 id: data.user.id,
                 email: email,
                 full_name: fullName,

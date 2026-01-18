@@ -1,93 +1,152 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { Zap } from 'lucide-react'
+import { useState, useEffect, useCallback } from 'react'
 
 interface CountdownTimerProps {
-    endTime: string
+  targetDate: Date
+  onComplete?: () => void
 }
 
-export default function CountdownTimer({ endTime }: CountdownTimerProps) {
-    const [timeLeft, setTimeLeft] = useState({
-        hours: 0,
-        minutes: 0,
-        seconds: 0,
-    })
+interface TimeLeft {
+  hours: number
+  minutes: number
+  seconds: number
+}
 
-    useEffect(() => {
-        const calculateTimeLeft = () => {
-            const difference = new Date(endTime).getTime() - new Date().getTime()
+export default function CountdownTimer({ targetDate, onComplete }: CountdownTimerProps) {
+  const calculateTimeLeft = useCallback((): TimeLeft => {
+    const difference = targetDate.getTime() - new Date().getTime()
 
-            if (difference > 0) {
-                setTimeLeft({
-                    hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-                    minutes: Math.floor((difference / 1000 / 60) % 60),
-                    seconds: Math.floor((difference / 1000) % 60),
-                })
-            }
-        }
+    if (difference <= 0) {
+      if (onComplete) onComplete()
+      return { hours: 0, minutes: 0, seconds: 0 }
+    }
 
-        calculateTimeLeft()
-        const timer = setInterval(calculateTimeLeft, 1000)
+    return {
+      hours: Math.floor(difference / (1000 * 60 * 60)),
+      minutes: Math.floor((difference / (1000 * 60)) % 60),
+      seconds: Math.floor((difference / 1000) % 60),
+    }
+  }, [targetDate, onComplete])
 
-        return () => clearInterval(timer)
-    }, [endTime])
+  const [timeLeft, setTimeLeft] = useState<TimeLeft>({ hours: 0, minutes: 0, seconds: 0 })
+  const [mounted, setMounted] = useState(false)
 
-    const formatNumber = (num: number) => num.toString().padStart(2, '0')
+  useEffect(() => {
+    setMounted(true)
+    setTimeLeft(calculateTimeLeft())
 
+    const timer = setInterval(() => {
+      setTimeLeft(calculateTimeLeft())
+    }, 1000)
+
+    return () => clearInterval(timer)
+  }, [calculateTimeLeft])
+
+  if (!mounted) {
     return (
-        <div className="countdown-timer">
-            <div className="timer-label">
-                <Zap size={16} fill="currentColor" />
-                <span>Berakhir dalam</span>
-            </div>
-            <div className="timer-boxes">
-                <div className="timer-box">{formatNumber(timeLeft.hours)}</div>
-                <span className="timer-separator">:</span>
-                <div className="timer-box">{formatNumber(timeLeft.minutes)}</div>
-                <span className="timer-separator">:</span>
-                <div className="timer-box">{formatNumber(timeLeft.seconds)}</div>
-            </div>
-
-            <style jsx>{`
-        .countdown-timer {
-          display: flex;
-          align-items: center;
-          gap: var(--space-3);
-        }
-
-        .timer-label {
-          display: flex;
-          align-items: center;
-          gap: var(--space-1);
-          color: var(--text-inverse);
-          font-size: var(--text-sm);
-          font-weight: 500;
-        }
-
-        .timer-boxes {
-          display: flex;
-          align-items: center;
-          gap: var(--space-1);
-        }
-
-        .timer-box {
-          background: var(--gray-900);
-          color: white;
-          padding: var(--space-1) var(--space-2);
-          border-radius: var(--radius-sm);
-          font-weight: 700;
-          font-size: var(--text-sm);
-          min-width: 32px;
-          text-align: center;
-          font-family: monospace;
-        }
-
-        .timer-separator {
-          color: white;
-          font-weight: 700;
-        }
-      `}</style>
+      <div className="countdown-timer">
+        <div className="countdown-item">
+          <span className="countdown-value">--</span>
         </div>
+        <span className="countdown-separator">:</span>
+        <div className="countdown-item">
+          <span className="countdown-value">--</span>
+        </div>
+        <span className="countdown-separator">:</span>
+        <div className="countdown-item">
+          <span className="countdown-value">--</span>
+        </div>
+        <style jsx>{styles}</style>
+      </div>
     )
+  }
+
+  const formatNumber = (num: number) => num.toString().padStart(2, '0')
+
+  return (
+    <div className="countdown-timer">
+      <div className="countdown-item">
+        <span className="countdown-value">{formatNumber(timeLeft.hours)}</span>
+        <span className="countdown-label">Jam</span>
+      </div>
+      <span className="countdown-separator">:</span>
+      <div className="countdown-item">
+        <span className="countdown-value">{formatNumber(timeLeft.minutes)}</span>
+        <span className="countdown-label">Mnt</span>
+      </div>
+      <span className="countdown-separator">:</span>
+      <div className="countdown-item animate-pulse">
+        <span className="countdown-value">{formatNumber(timeLeft.seconds)}</span>
+        <span className="countdown-label">Dtk</span>
+      </div>
+
+      <style jsx>{styles}</style>
+    </div>
+  )
 }
+
+const styles = `
+    .countdown-timer {
+        display: flex;
+        align-items: center;
+        gap: var(--space-1);
+    }
+
+    .countdown-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: var(--gray-900);
+        color: white;
+        padding: var(--space-2) var(--space-3);
+        border-radius: var(--radius-lg);
+        min-width: 44px;
+    }
+
+    .countdown-value {
+        font-family: var(--font-display);
+        font-size: var(--text-lg);
+        font-weight: 700;
+        line-height: 1;
+    }
+
+    .countdown-label {
+        font-size: 9px;
+        text-transform: uppercase;
+        opacity: 0.7;
+        margin-top: 2px;
+    }
+
+    .countdown-separator {
+        font-size: var(--text-lg);
+        font-weight: 700;
+        color: var(--gray-900);
+    }
+
+    .animate-pulse {
+        animation: pulse 1s ease infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.7;
+        }
+    }
+
+    @media (min-width: 768px) {
+        .countdown-item {
+            padding: var(--space-2) var(--space-4);
+            min-width: 52px;
+        }
+        .countdown-value {
+            font-size: var(--text-xl);
+        }
+        .countdown-label {
+            font-size: 10px;
+        }
+    }
+`

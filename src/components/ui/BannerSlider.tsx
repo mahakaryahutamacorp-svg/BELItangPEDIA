@@ -1,199 +1,281 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import Link from 'next/link'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Banner } from '@/types'
 
 interface BannerSliderProps {
-    banners: Banner[]
-    autoPlayInterval?: number
+  banners: Banner[]
+  autoPlayInterval?: number
 }
 
-export default function BannerSlider({ banners, autoPlayInterval = 5000 }: BannerSliderProps) {
-    const [currentIndex, setCurrentIndex] = useState(0)
+export default function BannerSlider({
+  banners,
+  autoPlayInterval = 5000
+}: BannerSliderProps) {
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [isTransitioning, setIsTransitioning] = useState(false)
 
-    useEffect(() => {
-        if (banners.length <= 1) return
+  const goToNext = useCallback(() => {
+    if (isTransitioning) return
+    setIsTransitioning(true)
+    setCurrentIndex((prev) => (prev + 1) % banners.length)
+    setTimeout(() => setIsTransitioning(false), 500)
+  }, [banners.length, isTransitioning])
 
-        const interval = setInterval(() => {
-            setCurrentIndex((prev) => (prev + 1) % banners.length)
-        }, autoPlayInterval)
+  const goToPrev = useCallback(() => {
+    if (isTransitioning) return
+    setIsTransitioning(true)
+    setCurrentIndex((prev) => (prev - 1 + banners.length) % banners.length)
+    setTimeout(() => setIsTransitioning(false), 500)
+  }, [banners.length, isTransitioning])
 
-        return () => clearInterval(interval)
-    }, [banners.length, autoPlayInterval])
+  const goToSlide = (index: number) => {
+    if (isTransitioning || index === currentIndex) return
+    setIsTransitioning(true)
+    setCurrentIndex(index)
+    setTimeout(() => setIsTransitioning(false), 500)
+  }
 
-    const goToPrevious = () => {
-        setCurrentIndex((prev) => (prev - 1 + banners.length) % banners.length)
-    }
+  // Auto play
+  useEffect(() => {
+    const interval = setInterval(goToNext, autoPlayInterval)
+    return () => clearInterval(interval)
+  }, [goToNext, autoPlayInterval])
 
-    const goToNext = () => {
-        setCurrentIndex((prev) => (prev + 1) % banners.length)
-    }
+  if (!banners.length) return null
 
-    const goToSlide = (index: number) => {
-        setCurrentIndex(index)
-    }
-
-    if (banners.length === 0) return null
-
-    return (
-        <div className="banner-slider">
-            <div
-                className="slides-container"
-                style={{ transform: `translateX(-${currentIndex * 100}%)` }}
-            >
-                {banners.map((banner) => (
-                    <div key={banner.id} className="slide">
-                        <img src={banner.image_url} alt={banner.title} />
-                        <div className="slide-overlay">
-                            <h2>{banner.title}</h2>
-                        </div>
-                    </div>
-                ))}
+  return (
+    <div className="banner-slider">
+      <div className="banner-container">
+        {banners.map((banner, index) => (
+          <Link
+            href={banner.link || '#'}
+            key={banner.id}
+            className={`banner-slide ${index === currentIndex ? 'active' : ''}`}
+          >
+            <img
+              src={banner.image_url}
+              alt={banner.title}
+              loading={index === 0 ? 'eager' : 'lazy'}
+            />
+            <div className="banner-overlay">
+              <div className="banner-content">
+                <h2 className="banner-title">{banner.title}</h2>
+              </div>
             </div>
+          </Link>
+        ))}
+      </div>
 
-            {/* Navigation Arrows */}
-            {banners.length > 1 && (
-                <>
-                    <button className="nav-arrow prev" onClick={goToPrevious}>
-                        <ChevronLeft size={24} />
-                    </button>
-                    <button className="nav-arrow next" onClick={goToNext}>
-                        <ChevronRight size={24} />
-                    </button>
-                </>
-            )}
+      {/* Navigation Arrows */}
+      <button
+        className="banner-nav banner-nav-prev"
+        onClick={goToPrev}
+        aria-label="Previous slide"
+      >
+        <ChevronLeft size={28} />
+      </button>
+      <button
+        className="banner-nav banner-nav-next"
+        onClick={goToNext}
+        aria-label="Next slide"
+      >
+        <ChevronRight size={28} />
+      </button>
 
-            {/* Dots */}
-            {banners.length > 1 && (
-                <div className="dots">
-                    {banners.map((_, index) => (
-                        <button
-                            key={index}
-                            className={`dot ${index === currentIndex ? 'active' : ''}`}
-                            onClick={() => goToSlide(index)}
-                        />
-                    ))}
-                </div>
-            )}
+      {/* Dots */}
+      <div className="banner-dots">
+        {banners.map((_, index) => (
+          <button
+            key={index}
+            className={`banner-dot ${index === currentIndex ? 'active' : ''}`}
+            onClick={() => goToSlide(index)}
+            aria-label={`Go to slide ${index + 1}`}
+          />
+        ))}
+      </div>
 
-            <style jsx>{`
-        .banner-slider {
-          position: relative;
-          width: 100%;
-          border-radius: var(--radius-2xl);
-          overflow: hidden;
-          background: var(--gray-200);
-        }
+      <style jsx>{`
+                .banner-slider {
+                    position: relative;
+                    width: 100%;
+                    overflow: hidden;
+                    border-radius: 0;
+                }
 
-        .slides-container {
-          display: flex;
-          transition: transform 0.5s ease-in-out;
-        }
+                @media (min-width: 768px) {
+                    .banner-slider {
+                        border-radius: var(--radius-2xl);
+                        margin: var(--space-4) auto;
+                        max-width: calc(100% - var(--space-12));
+                    }
+                }
 
-        .slide {
-          min-width: 100%;
-          position: relative;
-          aspect-ratio: 21/9;
-        }
+                .banner-container {
+                    position: relative;
+                    width: 100%;
+                    aspect-ratio: 16/9;
+                }
 
-        @media (max-width: 768px) {
-          .slide {
-            aspect-ratio: 16/9;
-          }
-        }
+                @media (min-width: 768px) {
+                    .banner-container {
+                        aspect-ratio: 21/9;
+                    }
+                }
 
-        .slide img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
+                @media (min-width: 1200px) {
+                    .banner-container {
+                        aspect-ratio: 3/1;
+                    }
+                }
 
-        .slide-overlay {
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          padding: var(--space-8) var(--space-6);
-          background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
-        }
+                .banner-slide {
+                    position: absolute;
+                    inset: 0;
+                    opacity: 0;
+                    transform: scale(1.05);
+                    transition: all 0.6s ease;
+                    pointer-events: none;
+                }
 
-        .slide-overlay h2 {
-          color: white;
-          font-size: var(--text-2xl);
-          font-weight: 700;
-          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        }
+                .banner-slide.active {
+                    opacity: 1;
+                    transform: scale(1);
+                    pointer-events: auto;
+                }
 
-        @media (max-width: 768px) {
-          .slide-overlay h2 {
-            font-size: var(--text-lg);
-          }
-        }
+                .banner-slide img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
 
-        .nav-arrow {
-          position: absolute;
-          top: 50%;
-          transform: translateY(-50%);
-          width: 48px;
-          height: 48px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background: rgba(255, 255, 255, 0.9);
-          border-radius: var(--radius-full);
-          color: var(--text-primary);
-          box-shadow: var(--shadow-lg);
-          transition: all var(--transition-fast);
-          opacity: 0;
-          cursor: pointer;
-        }
+                .banner-overlay {
+                    position: absolute;
+                    inset: 0;
+                    background: linear-gradient(
+                        to right,
+                        rgba(0, 0, 0, 0.6) 0%,
+                        rgba(0, 0, 0, 0.3) 50%,
+                        transparent 100%
+                    );
+                    display: flex;
+                    align-items: flex-end;
+                    padding: var(--space-6);
+                }
 
-        .banner-slider:hover .nav-arrow {
-          opacity: 1;
-        }
+                @media (min-width: 768px) {
+                    .banner-overlay {
+                        align-items: center;
+                        padding: var(--space-12);
+                    }
+                }
 
-        .nav-arrow:hover {
-          background: white;
-          transform: translateY(-50%) scale(1.1);
-        }
+                .banner-content {
+                    max-width: 500px;
+                }
 
-        .nav-arrow.prev {
-          left: var(--space-4);
-        }
+                .banner-title {
+                    font-family: var(--font-display);
+                    font-size: var(--text-xl);
+                    font-weight: 700;
+                    color: white;
+                    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+                    line-height: 1.3;
+                }
 
-        .nav-arrow.next {
-          right: var(--space-4);
-        }
+                @media (min-width: 768px) {
+                    .banner-title {
+                        font-size: var(--text-3xl);
+                    }
+                }
 
-        .dots {
-          position: absolute;
-          bottom: var(--space-4);
-          left: 50%;
-          transform: translateX(-50%);
-          display: flex;
-          gap: var(--space-2);
-        }
+                @media (min-width: 1024px) {
+                    .banner-title {
+                        font-size: var(--text-4xl);
+                    }
+                }
 
-        .dot {
-          width: 8px;
-          height: 8px;
-          border-radius: var(--radius-full);
-          background: rgba(255, 255, 255, 0.5);
-          border: none;
-          cursor: pointer;
-          transition: all var(--transition-fast);
-        }
+                .banner-nav {
+                    position: absolute;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    width: 44px;
+                    height: 44px;
+                    background: rgba(255, 255, 255, 0.9);
+                    backdrop-filter: blur(4px);
+                    border-radius: var(--radius-full);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: var(--text-primary);
+                    box-shadow: var(--shadow-lg);
+                    transition: all var(--transition-fast);
+                    opacity: 0;
+                    z-index: 10;
+                }
 
-        .dot.active {
-          width: 24px;
-          background: white;
-        }
+                .banner-slider:hover .banner-nav {
+                    opacity: 1;
+                }
 
-        .dot:hover {
-          background: rgba(255, 255, 255, 0.8);
-        }
-      `}</style>
-        </div>
-    )
+                .banner-nav:hover {
+                    background: white;
+                    transform: translateY(-50%) scale(1.1);
+                }
+
+                .banner-nav-prev {
+                    left: var(--space-4);
+                }
+
+                .banner-nav-next {
+                    right: var(--space-4);
+                }
+
+                .banner-dots {
+                    position: absolute;
+                    bottom: var(--space-4);
+                    left: 50%;
+                    transform: translateX(-50%);
+                    display: flex;
+                    gap: var(--space-2);
+                    z-index: 10;
+                }
+
+                .banner-dot {
+                    width: 8px;
+                    height: 8px;
+                    background: rgba(255, 255, 255, 0.5);
+                    border-radius: var(--radius-full);
+                    transition: all var(--transition-fast);
+                    cursor: pointer;
+                }
+
+                .banner-dot:hover {
+                    background: rgba(255, 255, 255, 0.8);
+                }
+
+                .banner-dot.active {
+                    width: 24px;
+                    background: white;
+                }
+
+                @media (max-width: 768px) {
+                    .banner-nav {
+                        width: 36px;
+                        height: 36px;
+                        opacity: 1;
+                    }
+                    .banner-nav-prev {
+                        left: var(--space-2);
+                    }
+                    .banner-nav-next {
+                        right: var(--space-2);
+                    }
+                }
+            `}</style>
+    </div>
+  )
 }
