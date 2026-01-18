@@ -331,6 +331,9 @@ export const mockFlashSale: FlashSale = {
     ],
 }
 
+// Flash Sale End Time (untuk countdown timer)
+export const flashSaleEndTime = new Date(Date.now() + 8 * 60 * 60 * 1000) // 8 hours from now
+
 // Shipping Options
 export const shippingOptions = [
     {

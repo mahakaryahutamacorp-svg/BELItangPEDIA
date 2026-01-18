@@ -22,7 +22,7 @@ export default function ProductCard({
 }: ProductCardProps) {
   const [isWishlisted, setIsWishlisted] = useState(false)
   const [isAdding, setIsAdding] = useState(false)
-  const addItem = useCartStore(state => state.addItem)
+  const addToCart = useCartStore(state => state.addToCart)
 
   const discount = product.discount_price
     ? calculateDiscount(product.price, product.discount_price)
@@ -36,11 +36,7 @@ export default function ProductCard({
     // Simulate adding to cart
     await new Promise(resolve => setTimeout(resolve, 300))
 
-    addItem({
-      product,
-      quantity: 1,
-      selectedVariant: null
-    })
+    addToCart(product, 1, null)
 
     setIsAdding(false)
   }
