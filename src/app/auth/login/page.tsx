@@ -2,145 +2,177 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Mail, Lock, Eye, EyeOff, Chrome } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { Mail, Lock, Eye, EyeOff, Chrome, AlertCircle } from 'lucide-react'
+import { useAuth } from '@/components/providers/AuthProvider'
 
 export default function LoginPage() {
-    const [showPassword, setShowPassword] = useState(false)
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter()
+  const { signInWithEmail, signInWithGoogle } = useAuth()
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
-        setIsLoading(true)
-        // Simulate login
-        await new Promise(resolve => setTimeout(resolve, 1500))
-        setIsLoading(false)
-        // Redirect
-        window.location.href = '/'
+  const [showPassword, setShowPassword] = useState(false)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
+    setError(null)
+
+    const { error } = await signInWithEmail(email, password)
+
+    if (error) {
+      setError(getErrorMessage(error.message))
+      setIsLoading(false)
+    } else {
+      router.push('/')
     }
+  }
 
-    const handleGoogleLogin = async () => {
-        setIsLoading(true)
-        // Simulate Google login
-        await new Promise(resolve => setTimeout(resolve, 1500))
-        setIsLoading(false)
-        window.location.href = '/'
+  const handleGoogleLogin = async () => {
+    setIsLoading(true)
+    setError(null)
+
+    const { error } = await signInWithGoogle()
+
+    if (error) {
+      setError('Gagal login dengan Google. Silakan coba lagi.')
+      setIsLoading(false)
     }
+  }
 
-    return (
-        <div className="auth-page">
-            <div className="auth-container">
-                {/* Left Side - Branding */}
-                <div className="auth-branding">
-                    <Link href="/" className="logo">
-                        <span className="logo-icon">🛒</span>
-                        <span className="logo-text">
-                            <span className="logo-beli">BELI</span>
-                            <span className="logo-tang">tang</span>
-                            <span className="logo-pedia">PEDIA</span>
-                        </span>
-                    </Link>
-                    <h1>Selamat Datang!</h1>
-                    <p>Marketplace lokal untuk masyarakat Belitang dan sekitarnya.</p>
-                    <div className="features">
-                        <div className="feature">
-                            <span>🚚</span>
-                            <span>Pengiriman Cepat 1-2 Jam</span>
-                        </div>
-                        <div className="feature">
-                            <span>💵</span>
-                            <span>Bayar di Tempat (COD)</span>
-                        </div>
-                        <div className="feature">
-                            <span>🏪</span>
-                            <span>Dukung UMKM Lokal</span>
-                        </div>
-                    </div>
-                </div>
+  const getErrorMessage = (message: string) => {
+    if (message.includes('Invalid login credentials')) {
+      return 'Email atau password salah'
+    }
+    if (message.includes('Email not confirmed')) {
+      return 'Email belum diverifikasi. Cek inbox email Anda.'
+    }
+    return 'Terjadi kesalahan. Silakan coba lagi.'
+  }
 
-                {/* Right Side - Form */}
-                <div className="auth-form-container">
-                    <div className="auth-form-card">
-                        <h2>Masuk</h2>
-                        <p className="subtitle">Masuk ke akun Anda untuk melanjutkan</p>
+  return (
+    <div className="auth-page">
+      <div className="auth-container">
+        {/* Left Side - Branding */}
+        <div className="auth-branding">
+          <Link href="/" className="logo">
+            <span className="logo-icon">🛒</span>
+            <span className="logo-text">
+              <span className="logo-beli">BELI</span>
+              <span className="logo-tang">tang</span>
+              <span className="logo-pedia">PEDIA</span>
+            </span>
+          </Link>
+          <h1>Selamat Datang!</h1>
+          <p>Marketplace lokal untuk masyarakat Belitang dan sekitarnya.</p>
+          <div className="features">
+            <div className="feature">
+              <span>🚚</span>
+              <span>Pengiriman Cepat 1-2 Jam</span>
+            </div>
+            <div className="feature">
+              <span>💵</span>
+              <span>Bayar di Tempat (COD)</span>
+            </div>
+            <div className="feature">
+              <span>🏪</span>
+              <span>Dukung UMKM Lokal</span>
+            </div>
+          </div>
+        </div>
 
-                        <button
-                            className="btn-google"
-                            onClick={handleGoogleLogin}
-                            disabled={isLoading}
-                        >
-                            <Chrome size={20} />
-                            Masuk dengan Google
-                        </button>
+        {/* Right Side - Form */}
+        <div className="auth-form-container">
+          <div className="auth-form-card">
+            <h2>Masuk</h2>
+            <p className="subtitle">Masuk ke akun Anda untuk melanjutkan</p>
 
-                        <div className="divider">
-                            <span>atau masuk dengan email</span>
-                        </div>
+            {error && (
+              <div className="error-alert">
+                <AlertCircle size={18} />
+                <span>{error}</span>
+              </div>
+            )}
 
-                        <form onSubmit={handleSubmit}>
-                            <div className="input-group">
-                                <label>Email</label>
-                                <div className="input-wrapper">
-                                    <Mail size={18} className="input-icon" />
-                                    <input
-                                        type="email"
-                                        placeholder="email@example.com"
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
-                                        required
-                                    />
-                                </div>
-                            </div>
+            <button
+              className="btn-google"
+              onClick={handleGoogleLogin}
+              disabled={isLoading}
+            >
+              <Chrome size={20} />
+              Masuk dengan Google
+            </button>
 
-                            <div className="input-group">
-                                <label>Password</label>
-                                <div className="input-wrapper">
-                                    <Lock size={18} className="input-icon" />
-                                    <input
-                                        type={showPassword ? 'text' : 'password'}
-                                        placeholder="Masukkan password"
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                        required
-                                    />
-                                    <button
-                                        type="button"
-                                        className="toggle-password"
-                                        onClick={() => setShowPassword(!showPassword)}
-                                    >
-                                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div className="form-options">
-                                <label className="checkbox-label">
-                                    <input type="checkbox" />
-                                    <span>Ingat saya</span>
-                                </label>
-                                <Link href="/auth/forgot-password" className="forgot-link">
-                                    Lupa password?
-                                </Link>
-                            </div>
-
-                            <button
-                                type="submit"
-                                className="btn btn-primary btn-lg submit-btn"
-                                disabled={isLoading}
-                            >
-                                {isLoading ? 'Memproses...' : 'Masuk'}
-                            </button>
-                        </form>
-
-                        <p className="register-link">
-                            Belum punya akun? <Link href="/auth/register">Daftar sekarang</Link>
-                        </p>
-                    </div>
-                </div>
+            <div className="divider">
+              <span>atau masuk dengan email</span>
             </div>
 
-            <style jsx>{`
+            <form onSubmit={handleSubmit}>
+              <div className="input-group">
+                <label>Email</label>
+                <div className="input-wrapper">
+                  <Mail size={18} className="input-icon" />
+                  <input
+                    type="email"
+                    placeholder="email@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="input-group">
+                <label>Password</label>
+                <div className="input-wrapper">
+                  <Lock size={18} className="input-icon" />
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="Masukkan password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="toggle-password"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+              </div>
+
+              <div className="form-options">
+                <label className="checkbox-label">
+                  <input type="checkbox" />
+                  <span>Ingat saya</span>
+                </label>
+                <Link href="/auth/forgot-password" className="forgot-link">
+                  Lupa password?
+                </Link>
+              </div>
+
+              <button
+                type="submit"
+                className="btn btn-primary btn-lg submit-btn"
+                disabled={isLoading}
+              >
+                {isLoading ? 'Memproses...' : 'Masuk'}
+              </button>
+            </form>
+
+            <p className="register-link">
+              Belum punya akun? <Link href="/auth/register">Daftar sekarang</Link>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <style jsx>{`
         .auth-page {
           min-height: 100vh;
           background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-700) 100%);
@@ -258,6 +290,19 @@ export default function LoginPage() {
         .subtitle {
           color: var(--text-secondary);
           margin-bottom: var(--space-6);
+        }
+
+        .error-alert {
+          display: flex;
+          align-items: center;
+          gap: var(--space-2);
+          padding: var(--space-3);
+          background: #FEE2E2;
+          border: 1px solid #FECACA;
+          border-radius: var(--radius-lg);
+          color: #DC2626;
+          font-size: var(--text-sm);
+          margin-bottom: var(--space-4);
         }
 
         .btn-google {
@@ -399,6 +444,6 @@ export default function LoginPage() {
           font-weight: 600;
         }
       `}</style>
-        </div>
-    )
+    </div>
+  )
 }

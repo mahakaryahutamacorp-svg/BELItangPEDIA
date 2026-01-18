@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import '@/styles/globals.css'
+import { AuthProvider } from '@/components/providers/AuthProvider'
 
 export const metadata: Metadata = {
     title: 'BELItangPEDIA - Marketplace Lokal Belitang',
@@ -28,7 +29,9 @@ export default function RootLayout({
                 />
             </head>
             <body>
-                {children}
+                <AuthProvider>
+                    {children}
+                </AuthProvider>
             </body>
         </html>
     )

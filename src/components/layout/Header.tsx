@@ -3,133 +3,133 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import {
-    Search,
-    ShoppingCart,
-    User,
-    Menu,
-    X,
-    MapPin,
-    Bell,
-    Heart,
-    ChevronDown,
-    Store
+  Search,
+  ShoppingCart,
+  User,
+  Menu,
+  X,
+  MapPin,
+  Bell,
+  Heart,
+  ChevronDown,
+  Store
 } from 'lucide-react'
 import { useCartStore } from '@/store/cartStore'
 import { useAuthStore } from '@/store/authStore'
 
 export default function Header() {
-    const [isMenuOpen, setIsMenuOpen] = useState(false)
-    const [searchQuery, setSearchQuery] = useState('')
-    const cartItemCount = useCartStore((state) => state.getTotalItems())
-    const { user, isAuthenticated } = useAuthStore()
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const cartItemCount = useCartStore((state) => state.getTotalItems())
+  const { user, isAuthenticated } = useAuthStore()
 
-    return (
-        <header className="header">
-            {/* Top Bar - Location */}
-            <div className="header-top">
-                <div className="container">
-                    <div className="header-location">
-                        <MapPin size={14} />
-                        <span>Dikirim ke <strong>Belitang, OKU Timur</strong></span>
-                        <ChevronDown size={14} />
-                    </div>
-                    <div className="header-top-links">
-                        <Link href="/seller">Mulai Berjualan</Link>
-                        <Link href="/help">Bantuan</Link>
-                    </div>
+  return (
+    <header className="header">
+      {/* Top Bar - Location */}
+      <div className="header-top">
+        <div className="container">
+          <div className="header-location">
+            <MapPin size={14} />
+            <span>Dikirim ke <strong>Belitang, OKU Timur</strong></span>
+            <ChevronDown size={14} />
+          </div>
+          <div className="header-top-links">
+            <Link href="/seller">Mulai Berjualan</Link>
+            <Link href="/help">Bantuan</Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Header */}
+      <div className="header-main">
+        <div className="container">
+          {/* Logo */}
+          <Link href="/" className="header-logo">
+            <span className="logo-icon">🛒</span>
+            <span className="logo-text">
+              <span className="logo-beli">BELI</span>
+              <span className="logo-tang">tang</span>
+              <span className="logo-pedia">PEDIA</span>
+            </span>
+          </Link>
+
+          {/* Search Bar */}
+          <div className="header-search">
+            <Search size={20} className="search-icon" />
+            <input
+              type="text"
+              placeholder="Cari produk, toko, atau kategori..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <button className="search-btn">Cari</button>
+          </div>
+
+          {/* Actions */}
+          <div className="header-actions">
+            <Link href="/wishlist" className="header-action-btn">
+              <Heart size={24} />
+            </Link>
+
+            <Link href="/notifications" className="header-action-btn">
+              <Bell size={24} />
+              <span className="action-badge">3</span>
+            </Link>
+
+            <Link href="/cart" className="header-action-btn cart-btn">
+              <ShoppingCart size={24} />
+              {cartItemCount > 0 && (
+                <span className="action-badge">{cartItemCount}</span>
+              )}
+            </Link>
+
+            <div className="header-divider"></div>
+
+            {isAuthenticated ? (
+              <Link href="/profile" className="header-user">
+                <div className="user-avatar">
+                  {user?.avatar_url ? (
+                    <img src={user.avatar_url} alt={user.full_name} />
+                  ) : (
+                    <User size={20} />
+                  )}
                 </div>
-            </div>
+                <span className="user-name">{user?.full_name || 'User'}</span>
+              </Link>
+            ) : (
+              <div className="header-auth">
+                <Link href="/auth/login" className="btn btn-ghost btn-sm">Masuk</Link>
+                <Link href="/auth/register" className="btn btn-primary btn-sm">Daftar</Link>
+              </div>
+            )}
 
-            {/* Main Header */}
-            <div className="header-main">
-                <div className="container">
-                    {/* Logo */}
-                    <Link href="/" className="header-logo">
-                        <span className="logo-icon">🛒</span>
-                        <span className="logo-text">
-                            <span className="logo-beli">BELI</span>
-                            <span className="logo-tang">tang</span>
-                            <span className="logo-pedia">PEDIA</span>
-                        </span>
-                    </Link>
+            <button
+              className="header-menu-toggle"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
+        </div>
+      </div>
 
-                    {/* Search Bar */}
-                    <div className="header-search">
-                        <Search size={20} className="search-icon" />
-                        <input
-                            type="text"
-                            placeholder="Cari produk, toko, atau kategori..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                        />
-                        <button className="search-btn">Cari</button>
-                    </div>
+      {/* Category Navigation */}
+      <nav className="header-nav">
+        <div className="container">
+          <ul className="nav-list">
+            <li><Link href="/category/makanan">🍜 Makanan</Link></li>
+            <li><Link href="/category/minuman">🧃 Minuman</Link></li>
+            <li><Link href="/category/elektronik">📱 Elektronik</Link></li>
+            <li><Link href="/category/fashion">👕 Fashion</Link></li>
+            <li><Link href="/category/kesehatan">💊 Kesehatan</Link></li>
+            <li><Link href="/category/kecantikan">💄 Kecantikan</Link></li>
+            <li><Link href="/category/rumah-tangga">🏠 Rumah Tangga</Link></li>
+            <li><Link href="/flash-sale" className="nav-flash-sale">⚡ Flash Sale</Link></li>
+          </ul>
+        </div>
+      </nav>
 
-                    {/* Actions */}
-                    <div className="header-actions">
-                        <Link href="/wishlist" className="header-action-btn">
-                            <Heart size={24} />
-                        </Link>
-
-                        <Link href="/notifications" className="header-action-btn">
-                            <Bell size={24} />
-                            <span className="action-badge">3</span>
-                        </Link>
-
-                        <Link href="/cart" className="header-action-btn cart-btn">
-                            <ShoppingCart size={24} />
-                            {cartItemCount > 0 && (
-                                <span className="action-badge">{cartItemCount}</span>
-                            )}
-                        </Link>
-
-                        <div className="header-divider"></div>
-
-                        {isAuthenticated ? (
-                            <Link href="/profile" className="header-user">
-                                <div className="user-avatar">
-                                    {user?.avatar_url ? (
-                                        <img src={user.avatar_url} alt={user.name} />
-                                    ) : (
-                                        <User size={20} />
-                                    )}
-                                </div>
-                                <span className="user-name">{user?.name || 'User'}</span>
-                            </Link>
-                        ) : (
-                            <div className="header-auth">
-                                <Link href="/auth/login" className="btn btn-ghost btn-sm">Masuk</Link>
-                                <Link href="/auth/register" className="btn btn-primary btn-sm">Daftar</Link>
-                            </div>
-                        )}
-
-                        <button
-                            className="header-menu-toggle"
-                            onClick={() => setIsMenuOpen(!isMenuOpen)}
-                        >
-                            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            {/* Category Navigation */}
-            <nav className="header-nav">
-                <div className="container">
-                    <ul className="nav-list">
-                        <li><Link href="/category/makanan">🍜 Makanan</Link></li>
-                        <li><Link href="/category/minuman">🧃 Minuman</Link></li>
-                        <li><Link href="/category/elektronik">📱 Elektronik</Link></li>
-                        <li><Link href="/category/fashion">👕 Fashion</Link></li>
-                        <li><Link href="/category/kesehatan">💊 Kesehatan</Link></li>
-                        <li><Link href="/category/kecantikan">💄 Kecantikan</Link></li>
-                        <li><Link href="/category/rumah-tangga">🏠 Rumah Tangga</Link></li>
-                        <li><Link href="/flash-sale" className="nav-flash-sale">⚡ Flash Sale</Link></li>
-                    </ul>
-                </div>
-            </nav>
-
-            <style jsx>{`
+      <style jsx>{`
         .header {
           position: sticky;
           top: 0;
@@ -452,6 +452,6 @@ export default function Header() {
           animation: pulse 2s ease infinite;
         }
       `}</style>
-        </header>
-    )
+    </header>
+  )
 }

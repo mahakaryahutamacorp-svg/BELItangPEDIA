@@ -69,13 +69,15 @@ export interface Store {
 export interface User {
     id: string
     email: string
-    name: string
+    full_name: string
     phone: string | null
     avatar_url: string | null
-    is_seller: boolean
+    role: 'buyer' | 'seller' | 'admin'
     created_at: string
-    updated_at: string
+    updated_at?: string
 }
+
+export type UserRole = 'buyer' | 'seller' | 'admin'
 
 export interface Address {
     id: string

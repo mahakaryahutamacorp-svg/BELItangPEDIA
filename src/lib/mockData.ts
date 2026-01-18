@@ -293,7 +293,7 @@ export const mockProducts: Product[] = [
 export const mockBanners: Banner[] = [
     {
         id: 'banner-1',
-        title: 'Flash Sale Akhir Pekan',
+        title: 'semua bisa jadi pengusaha',
         image_url: 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=1200',
         link: '/flash-sale',
         is_active: true,
