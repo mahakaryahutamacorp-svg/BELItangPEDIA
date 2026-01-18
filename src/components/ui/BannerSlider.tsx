@@ -133,8 +133,12 @@ export default function BannerSlider({
 
                 .banner-slide {
                     position: absolute;
-                    inset: 0;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
                     opacity: 0;
+                    visibility: hidden;
                     transform: scale(1.05);
                     transition: all 0.6s ease;
                     pointer-events: none;
@@ -142,6 +146,7 @@ export default function BannerSlider({
 
                 .banner-slide.active {
                     opacity: 1;
+                    visibility: visible;
                     transform: scale(1);
                     pointer-events: auto;
                 }
