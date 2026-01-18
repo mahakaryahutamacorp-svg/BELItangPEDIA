@@ -74,7 +74,6 @@ export default function Header() {
         <div className="container header-main-content">
           {/* Logo */}
           <Link href="/" className="header-logo">
-            <span className="logo-icon">🛒</span>
             <span className="logo-text">
               <span className="logo-beli">BELI</span>
               <span className="logo-tang">tang</span>
@@ -326,20 +325,16 @@ export default function Header() {
                     flex-shrink: 0;
                 }
 
-                .logo-icon {
-                    font-size: 32px;
-                }
-
                 .logo-text {
-                    display: none;
+                    display: block;
                     font-family: var(--font-display);
                     font-weight: 800;
-                    font-size: var(--text-xl);
+                    font-size: var(--text-lg);
                 }
 
                 @media (min-width: 768px) {
                     .logo-text {
-                        display: block;
+                        font-size: var(--text-xl);
                     }
                 }
 
