@@ -15,27 +15,17 @@ export default function BannerSlider({
   autoPlayInterval = 3000
 }: BannerSliderProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
-  const [isTransitioning, setIsTransitioning] = useState(false)
 
   const goToNext = useCallback(() => {
-    if (isTransitioning) return
-    setIsTransitioning(true)
     setCurrentIndex((prev) => (prev + 1) % banners.length)
-    setTimeout(() => setIsTransitioning(false), 500)
-  }, [banners.length, isTransitioning])
+  }, [banners.length])
 
   const goToPrev = useCallback(() => {
-    if (isTransitioning) return
-    setIsTransitioning(true)
     setCurrentIndex((prev) => (prev - 1 + banners.length) % banners.length)
-    setTimeout(() => setIsTransitioning(false), 500)
-  }, [banners.length, isTransitioning])
+  }, [banners.length])
 
   const goToSlide = (index: number) => {
-    if (isTransitioning || index === currentIndex) return
-    setIsTransitioning(true)
     setCurrentIndex(index)
-    setTimeout(() => setIsTransitioning(false), 500)
   }
 
   // Auto play
@@ -46,241 +36,124 @@ export default function BannerSlider({
 
   if (!banners.length) return null
 
+  const currentBanner = banners[currentIndex]
+
   return (
-    <div className="banner-slider">
-      <div className="banner-container">
-        {banners.map((banner, index) => (
-          <Link
-            href={banner.link || '#'}
-            key={banner.id}
-            className={`banner-slide ${index === currentIndex ? 'active' : ''}`}
-          >
-            <img
-              src={banner.image_url}
-              alt={banner.title}
-              loading={index === 0 ? 'eager' : 'lazy'}
-            />
-            <div className="banner-overlay">
-              <div className="banner-content">
-                <h2 className="banner-title">{banner.title}</h2>
-              </div>
-            </div>
-          </Link>
-        ))}
-      </div>
+    <div style={{
+      position: 'relative',
+      width: '100%',
+      overflow: 'hidden'
+    }}>
+      {/* Single Banner Display */}
+      <Link
+        href={currentBanner.link || '#'}
+        style={{
+          display: 'block',
+          position: 'relative',
+          width: '100%',
+          aspectRatio: '2/1'
+        }}
+      >
+        <img
+          src={currentBanner.image_url}
+          alt={currentBanner.title}
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover'
+          }}
+        />
+        <div style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          padding: '20px',
+          background: 'linear-gradient(transparent, rgba(0,0,0,0.7))'
+        }}>
+          <h2 style={{
+            color: 'white',
+            fontSize: '18px',
+            fontWeight: 700,
+            textShadow: '0 2px 4px rgba(0,0,0,0.3)'
+          }}>
+            {currentBanner.title}
+          </h2>
+        </div>
+      </Link>
 
       {/* Navigation Arrows */}
       <button
-        className="banner-nav banner-nav-prev"
-        onClick={goToPrev}
-        aria-label="Previous slide"
+        onClick={(e) => { e.preventDefault(); goToPrev(); }}
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '8px',
+          transform: 'translateY(-50%)',
+          width: '36px',
+          height: '36px',
+          background: 'rgba(255,255,255,0.9)',
+          borderRadius: '50%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          border: 'none',
+          cursor: 'pointer',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+          zIndex: 10
+        }}
       >
-        <ChevronLeft size={28} />
+        <ChevronLeft size={20} color="#333" />
       </button>
       <button
-        className="banner-nav banner-nav-next"
-        onClick={goToNext}
-        aria-label="Next slide"
+        onClick={(e) => { e.preventDefault(); goToNext(); }}
+        style={{
+          position: 'absolute',
+          top: '50%',
+          right: '8px',
+          transform: 'translateY(-50%)',
+          width: '36px',
+          height: '36px',
+          background: 'rgba(255,255,255,0.9)',
+          borderRadius: '50%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          border: 'none',
+          cursor: 'pointer',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+          zIndex: 10
+        }}
       >
-        <ChevronRight size={28} />
+        <ChevronRight size={20} color="#333" />
       </button>
 
       {/* Dots */}
-      <div className="banner-dots">
+      <div style={{
+        position: 'absolute',
+        bottom: '12px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        display: 'flex',
+        gap: '8px',
+        zIndex: 10
+      }}>
         {banners.map((_, index) => (
           <button
             key={index}
-            className={`banner-dot ${index === currentIndex ? 'active' : ''}`}
             onClick={() => goToSlide(index)}
-            aria-label={`Go to slide ${index + 1}`}
+            style={{
+              width: index === currentIndex ? '24px' : '8px',
+              height: '8px',
+              background: index === currentIndex ? 'white' : 'rgba(255,255,255,0.5)',
+              borderRadius: '4px',
+              border: 'none',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease'
+            }}
           />
         ))}
       </div>
-
-      <style jsx>{`
-                .banner-slider {
-                    position: relative;
-                    width: 100%;
-                    overflow: hidden;
-                    border-radius: 0;
-                }
-
-                @media (min-width: 768px) {
-                    .banner-slider {
-                        border-radius: var(--radius-2xl);
-                        margin: var(--space-4) auto;
-                        max-width: calc(100% - var(--space-12));
-                    }
-                }
-
-                .banner-container {
-                    position: relative;
-                    width: 100%;
-                    aspect-ratio: 2/1;
-                }
-
-                @media (min-width: 768px) {
-                    .banner-container {
-                        aspect-ratio: 21/9;
-                    }
-                }
-
-                @media (min-width: 1200px) {
-                    .banner-container {
-                        aspect-ratio: 3/1;
-                    }
-                }
-
-                .banner-slide {
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    opacity: 0;
-                    visibility: hidden;
-                    transform: scale(1.05);
-                    transition: all 0.6s ease;
-                    pointer-events: none;
-                }
-
-                .banner-slide.active {
-                    opacity: 1;
-                    visibility: visible;
-                    transform: scale(1);
-                    pointer-events: auto;
-                }
-
-                .banner-slide img {
-                    width: 100%;
-                    height: 100%;
-                    object-fit: cover;
-                }
-
-                .banner-overlay {
-                    position: absolute;
-                    inset: 0;
-                    background: linear-gradient(
-                        to right,
-                        rgba(0, 0, 0, 0.6) 0%,
-                        rgba(0, 0, 0, 0.3) 50%,
-                        transparent 100%
-                    );
-                    display: flex;
-                    align-items: flex-end;
-                    padding: var(--space-6);
-                }
-
-                @media (min-width: 768px) {
-                    .banner-overlay {
-                        align-items: center;
-                        padding: var(--space-12);
-                    }
-                }
-
-                .banner-content {
-                    max-width: 500px;
-                }
-
-                .banner-title {
-                    font-family: var(--font-display);
-                    font-size: var(--text-xl);
-                    font-weight: 700;
-                    color: white;
-                    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-                    line-height: 1.3;
-                }
-
-                @media (min-width: 768px) {
-                    .banner-title {
-                        font-size: var(--text-3xl);
-                    }
-                }
-
-                @media (min-width: 1024px) {
-                    .banner-title {
-                        font-size: var(--text-4xl);
-                    }
-                }
-
-                .banner-nav {
-                    position: absolute;
-                    top: 50%;
-                    transform: translateY(-50%);
-                    width: 44px;
-                    height: 44px;
-                    background: rgba(255, 255, 255, 0.9);
-                    backdrop-filter: blur(4px);
-                    border-radius: var(--radius-full);
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    color: var(--text-primary);
-                    box-shadow: var(--shadow-lg);
-                    transition: all var(--transition-fast);
-                    opacity: 0;
-                    z-index: 10;
-                }
-
-                .banner-slider:hover .banner-nav {
-                    opacity: 1;
-                }
-
-                .banner-nav:hover {
-                    background: white;
-                    transform: translateY(-50%) scale(1.1);
-                }
-
-                .banner-nav-prev {
-                    left: var(--space-4);
-                }
-
-                .banner-nav-next {
-                    right: var(--space-4);
-                }
-
-                .banner-dots {
-                    position: absolute;
-                    bottom: var(--space-4);
-                    left: 50%;
-                    transform: translateX(-50%);
-                    display: flex;
-                    gap: var(--space-2);
-                    z-index: 10;
-                }
-
-                .banner-dot {
-                    width: 8px;
-                    height: 8px;
-                    background: rgba(255, 255, 255, 0.5);
-                    border-radius: var(--radius-full);
-                    transition: all var(--transition-fast);
-                    cursor: pointer;
-                }
-
-                .banner-dot:hover {
-                    background: rgba(255, 255, 255, 0.8);
-                }
-
-                .banner-dot.active {
-                    width: 24px;
-                    background: white;
-                }
-
-                @media (max-width: 768px) {
-                    .banner-nav {
-                        width: 36px;
-                        height: 36px;
-                        opacity: 1;
-                    }
-                    .banner-nav-prev {
-                        left: var(--space-2);
-                    }
-                    .banner-nav-next {
-                        right: var(--space-2);
-                    }
-                }
-            `}</style>
     </div>
   )
 }
