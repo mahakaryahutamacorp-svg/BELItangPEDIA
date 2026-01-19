@@ -27,13 +27,14 @@ interface Banner {
 
 export default function AdminBannersPage() {
     const router = useRouter()
-    const { user, isAuthenticated } = useAuthStore()
+    const { user, isAuthenticated, isAdmin } = useAuthStore()
     const [banners, setBanners] = useState<Banner[]>([])
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
     const [editingId, setEditingId] = useState<string | null>(null)
     const [showAddForm, setShowAddForm] = useState(false)
     const [uploading, setUploading] = useState(false)
+    const [accessDenied, setAccessDenied] = useState(false)
 
     const [formData, setFormData] = useState({
         title: '',
@@ -46,8 +47,10 @@ export default function AdminBannersPage() {
     useEffect(() => {
         if (!isAuthenticated) {
             router.push('/auth/login?redirect=/admin/banners')
+        } else if (!isAdmin()) {
+            setAccessDenied(true)
         }
-    }, [isAuthenticated, router])
+    }, [isAuthenticated, isAdmin, router])
 
     // Fetch banners
     useEffect(() => {
@@ -187,6 +190,49 @@ export default function AdminBannersPage() {
 
     if (!isAuthenticated) {
         return <div style={{ padding: '40px', textAlign: 'center' }}>Loading...</div>
+    }
+
+    if (accessDenied) {
+        return (
+            <div style={{
+                minHeight: '100vh',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexDirection: 'column',
+                background: '#f5f5f5',
+                padding: '20px'
+            }}>
+                <div style={{
+                    background: 'white',
+                    borderRadius: '16px',
+                    padding: '40px',
+                    textAlign: 'center',
+                    boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+                    maxWidth: '400px'
+                }}>
+                    <span style={{ fontSize: '64px', display: 'block', marginBottom: '16px' }}>🔒</span>
+                    <h1 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '8px' }}>Akses Ditolak</h1>
+                    <p style={{ color: '#666', marginBottom: '24px' }}>
+                        Halaman ini hanya untuk Admin. Hubungi admin untuk mendapatkan akses.
+                    </p>
+                    <button
+                        onClick={() => router.push('/')}
+                        style={{
+                            padding: '12px 24px',
+                            background: 'linear-gradient(135deg, #f97316, #ea580c)',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '8px',
+                            fontWeight: 600,
+                            cursor: 'pointer'
+                        }}
+                    >
+                        Kembali ke Beranda
+                    </button>
+                </div>
+            </div>
+        )
     }
 
     return (

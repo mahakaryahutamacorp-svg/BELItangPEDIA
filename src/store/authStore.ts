@@ -19,6 +19,9 @@ interface AuthState {
     setDefaultAddress: (id: string) => void
     setLoading: (loading: boolean) => void
     logout: () => void
+
+    // Computed
+    isAdmin: () => boolean
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -29,6 +32,11 @@ export const useAuthStore = create<AuthState>()(
             addresses: [],
             isLoading: false,
             isAuthenticated: false,
+
+            isAdmin: () => {
+                const user = get().user
+                return user?.role === 'admin' || user?.email === 'admin@belitang.com'
+            },
 
             setUser: (user) => set({
                 user,
