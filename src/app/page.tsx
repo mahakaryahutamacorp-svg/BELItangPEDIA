@@ -20,16 +20,37 @@ import ProductCard from '@/components/ui/ProductCard'
 import BannerSlider from '@/components/ui/BannerSlider'
 import CountdownTimer from '@/components/ui/CountdownTimer'
 import { mockProducts, mockStores, mockCategories, mockBanners, flashSaleEndTime } from '@/lib/mockData'
+import { supabase } from '@/lib/supabase'
+import { Banner } from '@/types'
 
 export default function HomePage() {
   const [mounted, setMounted] = useState(false)
+  const [banners, setBanners] = useState<Banner[]>(mockBanners)
   const flashSaleProducts = mockProducts.slice(0, 6)
   const bestsellerProducts = mockProducts.slice(0, 10)
   const newProducts = mockProducts.slice(2, 12)
 
   useEffect(() => {
     setMounted(true)
+    // Fetch banners from Supabase
+    fetchBanners()
   }, [])
+
+  const fetchBanners = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('banners')
+        .select('*')
+        .eq('is_active', true)
+        .order('order', { ascending: true })
+
+      if (!error && data && data.length > 0) {
+        setBanners(data)
+      }
+    } catch (error) {
+      console.log('Using mock banners')
+    }
+  }
 
   if (!mounted) {
     return <HomePageSkeleton />
@@ -41,7 +62,7 @@ export default function HomePage() {
       <main className="main-content">
         {/* Banner Slider - Compact */}
         <section className="banner-section">
-          <BannerSlider banners={mockBanners} />
+          <BannerSlider banners={banners} />
         </section>
 
         {/* Quick Menu - Tokopedia Style */}
