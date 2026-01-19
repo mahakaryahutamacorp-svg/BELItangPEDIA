@@ -72,33 +72,70 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }, [storeLogout])
 
     const fetchUserProfile = async (userId: string) => {
-        const { data } = await supabase
-            .from('users')
-            .select('*')
-            .eq('id', userId)
-            .single()
+        try {
+            const { data, error } = await supabase
+                .from('users')
+                .select('*')
+                .eq('id', userId)
+                .single()
 
-        // Cast to any to avoid TypeScript errors with Supabase types
-        const profile = data as {
-            id: string
-            email: string
-            full_name: string
-            phone: string
-            avatar_url: string | null
-            role: string
-            created_at: string
-        } | null
+            if (error || !data) {
+                // Profile doesn't exist, get email from auth and create basic profile
+                const { data: authData } = await supabase.auth.getUser()
+                if (authData?.user) {
+                    // Set basic user info from auth
+                    setStoreUser({
+                        id: authData.user.id,
+                        email: authData.user.email || '',
+                        full_name: authData.user.user_metadata?.full_name || authData.user.email?.split('@')[0] || '',
+                        phone: authData.user.user_metadata?.phone || '',
+                        avatar_url: null,
+                        role: 'buyer',
+                        created_at: new Date().toISOString(),
+                    })
 
-        if (profile) {
-            setStoreUser({
-                id: profile.id,
-                email: profile.email || '',
-                full_name: profile.full_name || '',
-                phone: profile.phone || '',
-                avatar_url: profile.avatar_url || null,
-                role: (profile.role as 'buyer' | 'seller' | 'admin') || 'buyer',
-                created_at: profile.created_at || new Date().toISOString(),
-            })
+                    // Try to create profile in database
+                    try {
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        await (supabase.from('users') as any).insert({
+                            id: authData.user.id,
+                            email: authData.user.email,
+                            name: authData.user.user_metadata?.full_name || authData.user.email?.split('@')[0],
+                            phone: authData.user.user_metadata?.phone || '',
+                            role: 'user',
+                        })
+                    } catch (insertError) {
+                        console.log('Could not auto-create profile:', insertError)
+                    }
+                }
+                return
+            }
+
+            // Cast to any to avoid TypeScript errors with Supabase types
+            const profile = data as {
+                id: string
+                email: string
+                full_name?: string
+                name?: string
+                phone: string
+                avatar_url: string | null
+                role: string
+                created_at: string
+            } | null
+
+            if (profile) {
+                setStoreUser({
+                    id: profile.id,
+                    email: profile.email || '',
+                    full_name: profile.full_name || profile.name || '',
+                    phone: profile.phone || '',
+                    avatar_url: profile.avatar_url || null,
+                    role: (profile.role as 'buyer' | 'seller' | 'admin') || 'buyer',
+                    created_at: profile.created_at || new Date().toISOString(),
+                })
+            }
+        } catch (err) {
+            console.error('Error fetching profile:', err)
         }
     }
 
