@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Heart, Star, MapPin, ShoppingCart } from 'lucide-react'
 import { Product } from '@/types'
 import { formatPrice, calculateDiscount } from '@/lib/mockData'
@@ -22,6 +23,7 @@ export default function ProductCard({
 }: ProductCardProps) {
   const [isWishlisted, setIsWishlisted] = useState(false)
   const [isAdding, setIsAdding] = useState(false)
+  const [imgError, setImgError] = useState(false)
   const addToCart = useCartStore(state => state.addToCart)
 
   const discount = product.discount_price
@@ -47,6 +49,10 @@ export default function ProductCard({
     setIsWishlisted(!isWishlisted)
   }
 
+  const imageSrc = imgError || !product.images[0]
+    ? '/placeholder.svg'
+    : product.images[0]
+
   return (
     <Link href={`/products/${product.id}`}>
       <article
@@ -55,10 +61,13 @@ export default function ProductCard({
       >
         {/* Image Container */}
         <div className="product-image">
-          <img
-            src={product.images[0] || 'https://via.placeholder.com/300'}
+          <Image
+            src={imageSrc}
             alt={product.name}
-            loading="lazy"
+            fill
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+            style={{ objectFit: 'cover' }}
+            onError={() => setImgError(true)}
           />
 
           {/* Badges */}

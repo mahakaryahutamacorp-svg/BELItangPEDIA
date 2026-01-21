@@ -19,13 +19,14 @@ import MobileNav from '@/components/layout/MobileNav'
 import ProductCard from '@/components/ui/ProductCard'
 import BannerSlider from '@/components/ui/BannerSlider'
 import CountdownTimer from '@/components/ui/CountdownTimer'
+import Image from 'next/image'
 import { mockProducts, mockStores, mockCategories, mockBanners, flashSaleEndTime } from '@/lib/mockData'
 import { supabase } from '@/lib/supabase'
 import { Banner } from '@/types'
 
 export default function HomePage() {
   const [mounted, setMounted] = useState(false)
-  const [banners, setBanners] = useState<Banner[]>(mockBanners)
+  const [banners, setBanners] = useState<Banner[]>([])
   const flashSaleProducts = mockProducts.slice(0, 6)
   const bestsellerProducts = mockProducts.slice(0, 10)
   const newProducts = mockProducts.slice(2, 12)
@@ -163,7 +164,12 @@ export default function HomePage() {
             {mockStores.map((store) => (
               <Link href={`/store/${store.id}`} key={store.id} className="store-chip">
                 <div className="store-avatar">
-                  <img src={store.logo_url || 'https://via.placeholder.com/40'} alt={store.name} />
+                  <Image
+                    src={store.logo_url || 'https://placehold.co/40x40/f3f4f6/9ca3af?text=S'}
+                    alt={store.name}
+                    width={40}
+                    height={40}
+                  />
                 </div>
                 <div className="store-info">
                   <span className="store-name">{store.name}</span>

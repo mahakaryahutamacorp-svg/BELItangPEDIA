@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import {
   Search,
@@ -121,7 +122,7 @@ export default function Header() {
                 >
                   <div className="user-avatar">
                     {user?.avatar_url ? (
-                      <img src={user.avatar_url} alt={user.full_name} />
+                      <Image src={user.avatar_url} alt={user.full_name || 'User'} width={32} height={32} />
                     ) : (
                       <User size={18} />
                     )}
@@ -197,7 +198,7 @@ export default function Header() {
               <div className="mobile-user-info">
                 <div className="user-avatar large">
                   {user?.avatar_url ? (
-                    <img src={user.avatar_url} alt={user.full_name} />
+                    <Image src={user.avatar_url} alt={user.full_name || 'User'} width={48} height={48} />
                   ) : (
                     <User size={24} />
                   )}

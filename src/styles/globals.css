@@ -1243,3 +1243,186 @@ ol {
     }
   }
 }
+
+/* ========================
+   MOBILE ALIGNMENT FIXES
+   ======================== */
+@media (max-width: 768px) {
+  /* Button alignment - full width and centered */
+  .btn {
+    width: 100%;
+    justify-content: center;
+    padding: var(--space-4) var(--space-5);
+  }
+  
+  .btn-sm {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  /* Form elements - better alignment */
+  .form-group {
+    margin-bottom: var(--space-5);
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: var(--space-2);
+    font-weight: 500;
+  }
+
+  /* Input with icon - proper alignment */
+  .input-icon-wrapper {
+    position: relative;
+  }
+
+  .input-icon-wrapper input {
+    padding-left: 48px;
+  }
+
+  .input-icon-wrapper svg {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  /* Checkbox and inline items alignment */
+  .form-row,
+  .form-inline,
+  .flex-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  /* Checkbox label alignment */
+  .checkbox-wrapper,
+  .form-check {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .checkbox-wrapper input[type="checkbox"],
+  .form-check input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    flex-shrink: 0;
+  }
+
+  .checkbox-wrapper label,
+  .form-check label {
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  /* Links alignment with text */
+  .form-link,
+  .text-link {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* Category section - centered labels */
+  .category-chip {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-2);
+  }
+
+  .category-label {
+    margin-top: var(--space-2);
+  }
+
+  /* Quick menu icons - better spacing */
+  .quick-menu-item {
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .quick-menu-item span:last-child {
+    margin-top: 4px;
+  }
+
+  /* Cards - full width on mobile */
+  .auth-card,
+  .form-card {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: var(--space-5);
+  }
+
+  /* Auth buttons - proper spacing */
+  .auth-buttons,
+  .social-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .auth-buttons .btn,
+  .social-buttons .btn {
+    width: 100%;
+  }
+
+  /* Divider with centered text */
+  .divider-text,
+  .or-divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: var(--space-4) 0;
+  }
+
+  .divider-text::before,
+  .divider-text::after,
+  .or-divider::before,
+  .or-divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .divider-text span,
+  .or-divider span {
+    padding: 0 var(--space-3);
+    color: var(--text-tertiary);
+    font-size: var(--text-sm);
+  }
+
+  /* Bottom actions - centered */
+  .bottom-action,
+  .form-footer {
+    text-align: center;
+    margin-top: var(--space-5);
+  }
+
+  /* Product card action buttons - visible on mobile */
+  .product-card .quick-add-btn,
+  .product-card .wishlist-btn {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 375px) {
+  .btn {
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--text-sm);
+  }
+  
+  .container {
+    padding: 0 var(--space-3);
+  }
+
+  .auth-card,
+  .form-card {
+    padding: var(--space-4);
+  }
+}
