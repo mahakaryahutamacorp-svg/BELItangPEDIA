@@ -519,33 +519,8 @@ export const mockProducts: Product[] = [
     },
 ]
 
-// Mock Banners
-export const mockBanners: Banner[] = [
-    {
-        id: 'banner-1',
-        title: 'semua bisa jadi pengusaha',
-        image_url: 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=1200',
-        link: '/flash-sale',
-        is_active: true,
-        order: 1,
-    },
-    {
-        id: 'banner-2',
-        title: 'Gratis Ongkir Belitang',
-        image_url: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1200',
-        link: '/promo/gratis-ongkir',
-        is_active: true,
-        order: 2,
-    },
-    {
-        id: 'banner-3',
-        title: 'Dukung UMKM Lokal',
-        image_url: 'https://images.unsplash.com/photo-1556740758-90de374c12ad?w=1200',
-        link: '/umkm',
-        is_active: true,
-        order: 3,
-    },
-]
+// Mock Banners - Empty by default, banners should be loaded from Supabase
+export const mockBanners: Banner[] = []
 
 // Mock Flash Sale
 export const mockFlashSale: FlashSale = {
