@@ -5,6 +5,7 @@ import PWAInstallPrompt from '@/components/ui/PWAInstallPrompt'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 
 export const metadata: Metadata = {
+    metadataBase: new URL('https://belitang.com'),
     title: 'BELItangPEDIA - Marketplace Lokal Belitang',
     description: 'Marketplace lokal untuk masyarakat Belitang dan sekitarnya. Dukung UMKM lokal, belanja cepat sampai! Pengiriman instan, pembayaran COD.',
     keywords: ['belitang', 'marketplace', 'UMKM', 'toko online', 'belanja online', 'OKU Timur', 'belitangpedia', 'marketplace belitang'],
