@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import '@/styles/globals.css'
 import { AuthProvider } from '@/components/providers/AuthProvider'
 import PWAInstallPrompt from '@/components/ui/PWAInstallPrompt'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 
 export const metadata: Metadata = {
     title: 'BELItangPEDIA - Marketplace Lokal Belitang',
@@ -79,6 +80,7 @@ export default function RootLayout({
                 <AuthProvider>
                     {children}
                     <PWAInstallPrompt />
+                    <SpeedInsights />
                 </AuthProvider>
             </body>
         </html>

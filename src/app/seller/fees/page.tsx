@@ -7,154 +7,154 @@ import Footer from '@/components/layout/Footer'
 import MobileNav from '@/components/layout/MobileNav'
 
 const fees = [
-    {
-        name: 'Biaya Platform',
-        percent: '2%',
-        desc: 'Per transaksi berhasil',
-        included: true
-    },
-    {
-        name: 'Biaya Payment Gateway',
-        percent: '1%',
-        desc: 'Untuk pembayaran digital',
-        included: true
-    },
-    {
-        name: 'Biaya Pendaftaran',
-        percent: 'Rp0',
-        desc: 'GRATIS selamanya!',
-        included: false
-    },
-    {
-        name: 'Biaya Bulanan',
-        percent: 'Rp0',
-        desc: 'Tidak ada biaya langganan',
-        included: false
-    }
+  {
+    name: 'Biaya Platform',
+    percent: '2%',
+    desc: 'Per transaksi berhasil',
+    included: true
+  },
+  {
+    name: 'Biaya Payment Gateway',
+    percent: '1%',
+    desc: 'Untuk pembayaran digital',
+    included: true
+  },
+  {
+    name: 'Biaya Pendaftaran',
+    percent: 'Rp0',
+    desc: 'GRATIS selamanya!',
+    included: false
+  },
+  {
+    name: 'Biaya Bulanan',
+    percent: 'Rp0',
+    desc: 'Tidak ada biaya langganan',
+    included: false
+  }
 ]
 
 const comparison = [
-    { feature: 'Pendaftaran Gratis', us: true, others: false },
-    { feature: 'Biaya Platform Rendah', us: true, others: false },
-    { feature: 'Tanpa Biaya Bulanan', us: true, others: false },
-    { feature: 'COD Gratis', us: true, others: false },
-    { feature: 'Support 24/7', us: true, others: true },
-    { feature: 'Pengiriman Lokal Cepat', us: true, others: false },
+  { feature: 'Pendaftaran Gratis', us: true, others: false },
+  { feature: 'Biaya Platform Rendah', us: true, others: false },
+  { feature: 'Tanpa Biaya Bulanan', us: true, others: false },
+  { feature: 'COD Gratis', us: true, others: false },
+  { feature: 'Support 24/7', us: true, others: true },
+  { feature: 'Pengiriman Lokal Cepat', us: true, others: false },
 ]
 
 export default function SellerFeesPage() {
-    return (
-        <>
-            <Header />
-            <main className="main-content">
-                <div className="container">
-                    {/* Breadcrumb */}
-                    <div className="breadcrumb">
-                        <Link href="/seller" className="back-link">
-                            <ArrowLeft size={20} />
-                            <span>Kembali</span>
-                        </Link>
-                    </div>
+  return (
+    <>
+      <Header />
+      <main className="main-content">
+        <div className="container">
+          {/* Breadcrumb */}
+          <div className="breadcrumb">
+            <Link href="/seller" className="back-link">
+              <ArrowLeft size={20} />
+              <span>Kembali</span>
+            </Link>
+          </div>
 
-                    {/* Page Header */}
-                    <div className="page-header">
-                        <div className="header-icon">
-                            <DollarSign size={32} />
-                        </div>
-                        <div className="header-text">
-                            <h1>Biaya Layanan</h1>
-                            <p>Transparan dan terjangkau</p>
-                        </div>
-                    </div>
+          {/* Page Header */}
+          <div className="page-header">
+            <div className="header-icon">
+              <DollarSign size={32} />
+            </div>
+            <div className="header-text">
+              <h1>Biaya Layanan</h1>
+              <p>Transparan dan terjangkau</p>
+            </div>
+          </div>
 
-                    {/* Fees List */}
-                    <section className="fees-section">
-                        <h2>Rincian Biaya</h2>
-                        <div className="fees-list">
-                            {fees.map((fee, idx) => (
-                                <div key={idx} className={`fee-card ${!fee.included ? 'free' : ''}`}>
-                                    <div className="fee-info">
-                                        <h3>{fee.name}</h3>
-                                        <p>{fee.desc}</p>
-                                    </div>
-                                    <div className="fee-amount">
-                                        {fee.percent}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </section>
-
-                    {/* Calculation Example */}
-                    <section className="fees-section">
-                        <h2>Contoh Perhitungan</h2>
-                        <div className="calc-card">
-                            <div className="calc-row">
-                                <span>Harga Produk</span>
-                                <span>Rp100.000</span>
-                            </div>
-                            <div className="calc-row">
-                                <span>Biaya Platform (2%)</span>
-                                <span className="red">-Rp2.000</span>
-                            </div>
-                            <div className="calc-row">
-                                <span>Biaya Payment (1%)</span>
-                                <span className="red">-Rp1.000</span>
-                            </div>
-                            <div className="calc-divider" />
-                            <div className="calc-row total">
-                                <span>Yang Anda Terima</span>
-                                <span className="green">Rp97.000</span>
-                            </div>
-                        </div>
-                    </section>
-
-                    {/* Comparison */}
-                    <section className="fees-section">
-                        <h2>Perbandingan dengan Platform Lain</h2>
-                        <div className="comparison-table">
-                            <div className="table-header">
-                                <span></span>
-                                <span>BELItangPEDIA</span>
-                                <span>Lainnya</span>
-                            </div>
-                            {comparison.map((item, idx) => (
-                                <div key={idx} className="table-row">
-                                    <span>{item.feature}</span>
-                                    <span className="icon">
-                                        {item.us ? (
-                                            <CheckCircle size={18} className="check" />
-                                        ) : (
-                                            <XCircle size={18} className="x" />
-                                        )}
-                                    </span>
-                                    <span className="icon">
-                                        {item.others ? (
-                                            <CheckCircle size={18} className="check" />
-                                        ) : (
-                                            <XCircle size={18} className="x" />
-                                        )}
-                                    </span>
-                                </div>
-                            ))}
-                        </div>
-                    </section>
-
-                    {/* CTA */}
-                    <div className="cta-section">
-                        <h3>Mulai Berjualan Tanpa Modal!</h3>
-                        <p>Daftar gratis, mulai jualan hari ini</p>
-                        <Link href="/seller/register" className="btn btn-primary">
-                            Daftar Sekarang
-                            <ChevronRight size={18} />
-                        </Link>
-                    </div>
+          {/* Fees List */}
+          <section className="fees-section">
+            <h2>Rincian Biaya</h2>
+            <div className="fees-list">
+              {fees.map((fee, idx) => (
+                <div key={idx} className={`fee-card ${!fee.included ? 'free' : ''}`}>
+                  <div className="fee-info">
+                    <h3>{fee.name}</h3>
+                    <p>{fee.desc}</p>
+                  </div>
+                  <div className="fee-amount">
+                    {fee.percent}
+                  </div>
                 </div>
-            </main>
-            <Footer />
-            <MobileNav />
+              ))}
+            </div>
+          </section>
 
-            <style jsx>{`
+          {/* Calculation Example */}
+          <section className="fees-section">
+            <h2>Contoh Perhitungan</h2>
+            <div className="calc-card">
+              <div className="calc-row">
+                <span>Harga Produk</span>
+                <span>Rp100.000</span>
+              </div>
+              <div className="calc-row">
+                <span>Biaya Platform (2%)</span>
+                <span className="red">-Rp2.000</span>
+              </div>
+              <div className="calc-row">
+                <span>Biaya Payment (1%)</span>
+                <span className="red">-Rp1.000</span>
+              </div>
+              <div className="calc-divider" />
+              <div className="calc-row total">
+                <span>Yang Anda Terima</span>
+                <span className="green">Rp97.000</span>
+              </div>
+            </div>
+          </section>
+
+          {/* Comparison */}
+          <section className="fees-section">
+            <h2>Perbandingan dengan Platform Lain</h2>
+            <div className="comparison-table">
+              <div className="table-header">
+                <span></span>
+                <span>BELItangPEDIA</span>
+                <span>Lainnya</span>
+              </div>
+              {comparison.map((item, idx) => (
+                <div key={idx} className="table-row">
+                  <span>{item.feature}</span>
+                  <span className="icon">
+                    {item.us ? (
+                      <CheckCircle size={18} className="check" />
+                    ) : (
+                      <XCircle size={18} className="x" />
+                    )}
+                  </span>
+                  <span className="icon">
+                    {item.others ? (
+                      <CheckCircle size={18} className="check" />
+                    ) : (
+                      <XCircle size={18} className="x" />
+                    )}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* CTA */}
+          <div className="cta-section">
+            <h3>Mulai Berjualan Tanpa Modal!</h3>
+            <p>Daftar gratis, mulai jualan hari ini</p>
+            <Link href="/seller/register" className="btn btn-primary">
+              Daftar Sekarang
+              <ChevronRight size={18} />
+            </Link>
+          </div>
+        </div>
+      </main>
+      <Footer />
+      <MobileNav />
+
+      <style jsx>{`
         .main-content {
           background: var(--bg-secondary);
           min-height: 100vh;
@@ -228,6 +228,14 @@ export default function SellerFeesPage() {
           padding: var(--space-4);
           background: var(--bg-primary);
           border-radius: var(--radius-xl);
+          border: 1px solid var(--border-light);
+          box-shadow: var(--shadow-sm);
+          transition: all var(--transition-fast);
+        }
+
+        .fee-card:hover {
+          box-shadow: var(--shadow-md);
+          transform: translateY(-2px);
         }
 
         .fee-card.free {
@@ -358,6 +366,6 @@ export default function SellerFeesPage() {
           gap: var(--space-2);
         }
       `}</style>
-        </>
-    )
+    </>
+  )
 }
