@@ -4,118 +4,118 @@ import { useEffect, useState } from 'react'
 import { Download, X } from 'lucide-react'
 
 interface BeforeInstallPromptEvent extends Event {
-    prompt: () => Promise<void>
-    userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>
+  prompt: () => Promise<void>
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>
 }
 
 declare global {
-    interface WindowEventMap {
-        beforeinstallprompt: BeforeInstallPromptEvent
-    }
+  interface WindowEventMap {
+    beforeinstallprompt: BeforeInstallPromptEvent
+  }
 }
 
 export default function PWAInstallPrompt() {
-    const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null)
-    const [showInstallBanner, setShowInstallBanner] = useState(false)
-    const [isIOS, setIsIOS] = useState(false)
-    const [isStandalone, setIsStandalone] = useState(false)
+  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null)
+  const [showInstallBanner, setShowInstallBanner] = useState(false)
+  const [isIOS, setIsIOS] = useState(false)
+  const [isStandalone, setIsStandalone] = useState(false)
 
-    useEffect(() => {
-        // Register service worker
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker
-                .register('/sw.js')
-                .then((registration) => {
-                    console.log('Service Worker registered:', registration.scope)
-                })
-                .catch((error) => {
-                    console.log('Service Worker registration failed:', error)
-                })
-        }
-
-        // Check if running in standalone mode (already installed)
-        const standalone = window.matchMedia('(display-mode: standalone)').matches
-        setIsStandalone(standalone)
-
-        // Check if iOS
-        const isIOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream
-        setIsIOS(isIOSDevice)
-
-        // Listen for install prompt
-        const handleBeforeInstallPrompt = (e: BeforeInstallPromptEvent) => {
-            e.preventDefault()
-            setDeferredPrompt(e)
-
-            // Check if user has dismissed before
-            const dismissed = localStorage.getItem('pwa-install-dismissed')
-            if (!dismissed) {
-                setShowInstallBanner(true)
-            }
-        }
-
-        window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
-
-        // Listen for successful install
-        window.addEventListener('appinstalled', () => {
-            setShowInstallBanner(false)
-            setDeferredPrompt(null)
-            console.log('PWA was installed')
+  useEffect(() => {
+    // Register service worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker
+        .register('/sw.js')
+        .then((registration) => {
+          console.log('Service Worker registered:', registration.scope)
         })
-
-        return () => {
-            window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
-        }
-    }, [])
-
-    const handleInstallClick = async () => {
-        if (!deferredPrompt) return
-
-        deferredPrompt.prompt()
-        const { outcome } = await deferredPrompt.userChoice
-
-        if (outcome === 'accepted') {
-            console.log('User accepted the install prompt')
-        } else {
-            console.log('User dismissed the install prompt')
-        }
-
-        setDeferredPrompt(null)
-        setShowInstallBanner(false)
+        .catch((error) => {
+          console.log('Service Worker registration failed:', error)
+        })
     }
 
-    const handleDismiss = () => {
-        setShowInstallBanner(false)
-        localStorage.setItem('pwa-install-dismissed', 'true')
+    // Check if running in standalone mode (already installed)
+    const standalone = window.matchMedia('(display-mode: standalone)').matches
+    setIsStandalone(standalone)
+
+    // Check if iOS
+    const isIOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream
+    setIsIOS(isIOSDevice)
+
+    // Listen for install prompt
+    const handleBeforeInstallPrompt = (e: BeforeInstallPromptEvent) => {
+      e.preventDefault()
+      setDeferredPrompt(e)
+
+      // Check if user has dismissed before
+      const dismissed = localStorage.getItem('pwa-install-dismissed')
+      if (!dismissed) {
+        setShowInstallBanner(true)
+      }
     }
 
-    // Don't show if already installed
-    if (isStandalone) return null
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
 
-    // Show iOS instructions
-    if (isIOS && !isStandalone) {
-        const iosDismissed = typeof window !== 'undefined' && localStorage.getItem('ios-install-dismissed')
-        if (iosDismissed) return null
+    // Listen for successful install
+    window.addEventListener('appinstalled', () => {
+      setShowInstallBanner(false)
+      setDeferredPrompt(null)
+      console.log('PWA was installed')
+    })
 
-        return (
-            <div className="pwa-install-banner ios">
-                <div className="banner-content">
-                    <div className="banner-icon">📲</div>
-                    <div className="banner-text">
-                        <strong>Install BELItangPEDIA</strong>
-                        <span>Tap <strong>Share</strong> lalu <strong>&quot;Add to Home Screen&quot;</strong></span>
-                    </div>
-                    <button
-                        className="dismiss-btn"
-                        onClick={() => {
-                            localStorage.setItem('ios-install-dismissed', 'true')
-                            window.location.reload()
-                        }}
-                    >
-                        <X size={18} />
-                    </button>
-                </div>
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+    }
+  }, [])
 
-                <style jsx>{`
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return
+
+    deferredPrompt.prompt()
+    const { outcome } = await deferredPrompt.userChoice
+
+    if (outcome === 'accepted') {
+      console.log('User accepted the install prompt')
+    } else {
+      console.log('User dismissed the install prompt')
+    }
+
+    setDeferredPrompt(null)
+    setShowInstallBanner(false)
+  }
+
+  const handleDismiss = () => {
+    setShowInstallBanner(false)
+    localStorage.setItem('pwa-install-dismissed', 'true')
+  }
+
+  // Don't show if already installed
+  if (isStandalone) return null
+
+  // Show iOS instructions
+  if (isIOS && !isStandalone) {
+    const iosDismissed = typeof window !== 'undefined' && localStorage.getItem('ios-install-dismissed')
+    if (iosDismissed) return null
+
+    return (
+      <div className="pwa-install-banner ios">
+        <div className="banner-content">
+          <div className="banner-icon">📲</div>
+          <div className="banner-text">
+            <strong>Install BELItangPEDIA</strong>
+            <span>Tap <strong>Share</strong> lalu <strong>&quot;Add to Home Screen&quot;</strong></span>
+          </div>
+          <button
+            className="dismiss-btn"
+            onClick={() => {
+              localStorage.setItem('ios-install-dismissed', 'true')
+              window.location.reload()
+            }}
+          >
+            <X size={18} />
+          </button>
+        </div>
+
+        <style jsx>{`
           .pwa-install-banner {
             position: fixed;
             bottom: 70px;
@@ -189,31 +189,31 @@ export default function PWAInstallPrompt() {
             }
           }
         `}</style>
-            </div>
-        )
-    }
+      </div>
+    )
+  }
 
-    // Show install banner for Android/Desktop
-    if (!showInstallBanner) return null
+  // Show install banner for Android/Desktop
+  if (!showInstallBanner) return null
 
-    return (
-        <div className="pwa-install-banner">
-            <div className="banner-content">
-                <div className="banner-icon">📱</div>
-                <div className="banner-text">
-                    <strong>Install BELItangPEDIA</strong>
-                    <span>Akses lebih cepat dari home screen</span>
-                </div>
-                <button className="install-btn" onClick={handleInstallClick}>
-                    <Download size={16} />
-                    Install
-                </button>
-                <button className="dismiss-btn" onClick={handleDismiss}>
-                    <X size={18} />
-                </button>
-            </div>
+  return (
+    <div className="pwa-install-banner">
+      <div className="banner-content">
+        <div className="banner-icon">📱</div>
+        <div className="banner-text">
+          <strong>Install BELItangPEDIA</strong>
+          <span>Akses lebih cepat dari home screen</span>
+        </div>
+        <button className="install-btn" onClick={handleInstallClick}>
+          <Download size={16} />
+          Install
+        </button>
+        <button className="dismiss-btn" onClick={handleDismiss}>
+          <X size={18} />
+        </button>
+      </div>
 
-            <style jsx>{`
+      <style jsx>{`
         .pwa-install-banner {
           position: fixed;
           bottom: 70px;
@@ -306,6 +306,6 @@ export default function PWAInstallPrompt() {
           }
         }
       `}</style>
-        </div>
-    )
+    </div>
+  )
 }
