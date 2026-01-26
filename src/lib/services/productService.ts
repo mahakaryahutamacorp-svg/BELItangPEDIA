@@ -81,7 +81,6 @@ export const productService = {
                 .replace(/[^a-z0-9]+/g, '-')
                 .replace(/(^-|-$)/g, '')
 
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const { data, error } = await (supabase
                 .from('products') as any)
                 .insert({
@@ -94,7 +93,6 @@ export const productService = {
             if (error) throw error
 
             // Update store's total_products count
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             await (supabase as any).rpc('increment_store_products', { store_id: productData.store_id })
 
             return { data, error: null }
@@ -122,7 +120,6 @@ export const productService = {
                 updateData.slug = `${slug}-${Date.now()}`
             }
 
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const { data, error } = await (supabase
                 .from('products') as any)
                 .update(updateData)
@@ -151,7 +148,6 @@ export const productService = {
             if (error) throw error
 
             // Decrement store's total_products count
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             await (supabase as any).rpc('decrement_store_products', { store_id: storeId })
 
             return { success: true, error: null }
@@ -165,7 +161,6 @@ export const productService = {
      */
     async toggleProductStatus(productId: string, isActive: boolean): Promise<{ data: Product | null; error: Error | null }> {
         try {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const { data, error } = await (supabase
                 .from('products') as any)
                 .update({ is_active: isActive, updated_at: new Date().toISOString() })

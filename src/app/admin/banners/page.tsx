@@ -118,7 +118,6 @@ export default function AdminBannersPage() {
         try {
             if (editingId) {
                 // Update existing
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const { error } = await (supabase.from('banners') as any)
                     .update({
                         title: formData.title,
@@ -131,7 +130,6 @@ export default function AdminBannersPage() {
                 if (error) throw error
             } else {
                 // Create new
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const { error } = await (supabase.from('banners') as any)
                     .insert({
                         title: formData.title,
@@ -249,6 +247,7 @@ export default function AdminBannersPage() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <button
                         onClick={() => router.push('/')}
+                        aria-label="Kembali"
                         style={{
                             background: 'none',
                             border: 'none',
@@ -296,7 +295,7 @@ export default function AdminBannersPage() {
                             <h2 style={{ fontSize: '16px', fontWeight: 600 }}>
                                 {editingId ? 'Edit Banner' : 'Tambah Banner Baru'}
                             </h2>
-                            <button onClick={resetForm} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
+                            <button onClick={resetForm} aria-label="Tutup" style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
                                 <X size={20} color="#666" />
                             </button>
                         </div>
@@ -316,6 +315,7 @@ export default function AdminBannersPage() {
                                         />
                                         <button
                                             onClick={() => setFormData(prev => ({ ...prev, image_url: '' }))}
+                                            aria-label="Hapus Gambar"
                                             style={{
                                                 position: 'absolute',
                                                 top: '8px',
@@ -509,6 +509,7 @@ export default function AdminBannersPage() {
                                 </div>
                                 <button
                                     onClick={() => handleEdit(banner)}
+                                    aria-label="Edit Banner"
                                     style={{
                                         padding: '8px',
                                         background: '#f0f0f0',
@@ -521,6 +522,7 @@ export default function AdminBannersPage() {
                                 </button>
                                 <button
                                     onClick={() => handleDelete(banner.id)}
+                                    aria-label="Hapus Banner"
                                     style={{
                                         padding: '8px',
                                         background: '#fee2e2',

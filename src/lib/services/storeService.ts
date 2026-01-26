@@ -52,7 +52,6 @@ export const storeService = {
      */
     async createStore(storeData: StoreInsert): Promise<{ data: Store | null; error: Error | null }> {
         try {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const { data, error } = await (supabase
                 .from('stores') as any)
                 .insert(storeData)
@@ -61,12 +60,10 @@ export const storeService = {
 
             if (error) throw error
 
-            // Update user role to seller
             if (storeData.user_id) {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 await (supabase
                     .from('users') as any)
-                    .update({ is_seller: true })
+                    .update({ role: 'seller' })
                     .eq('id', storeData.user_id)
             }
 
@@ -81,7 +78,6 @@ export const storeService = {
      */
     async updateStore(storeId: string, storeData: StoreUpdate): Promise<{ data: Store | null; error: Error | null }> {
         try {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const { data, error } = await (supabase
                 .from('stores') as any)
                 .update(storeData)
@@ -151,7 +147,6 @@ export const storeService = {
                 .getPublicUrl(fileName)
 
             // Update store with logo URL
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             await (supabase
                 .from('stores') as any)
                 .update({ logo_url: publicUrl })
@@ -182,7 +177,6 @@ export const storeService = {
                 .getPublicUrl(fileName)
 
             // Update store with banner URL
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             await (supabase
                 .from('stores') as any)
                 .update({ banner_url: publicUrl })

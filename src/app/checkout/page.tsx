@@ -294,7 +294,7 @@ export default function CheckoutPage() {
                 </button>
 
                 <p className="terms-note">
-                  Dengan menekan tombol "Buat Pesanan", Anda menyetujui <Link href="/terms">Syarat & Ketentuan</Link> kami.
+                  Dengan menekan tombol &quot;Buat Pesanan&quot;, Anda menyetujui <Link href="/terms">Syarat &amp; Ketentuan</Link> kami.
                 </p>
               </div>
             </div>

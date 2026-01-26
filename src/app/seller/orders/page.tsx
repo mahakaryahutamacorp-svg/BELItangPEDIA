@@ -128,7 +128,6 @@ export default function SellerOrdersPage() {
                 if (fetchError) throw fetchError
 
                 // Cast data to expected shape
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const ordersData = (data || []) as any[]
 
                 // Fetch product info for each order item
@@ -167,9 +166,8 @@ export default function SellerOrdersPage() {
         fetchOrders()
     }, [store?.id, selectedStatus])
 
-    const updateOrderStatus = async (orderId: string, newStatus: string) => {
+    const updateOrderStatus = async (orderId: string, newStatus: Order['status']) => {
         try {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const { error: updateError } = await (supabase
                 .from('orders') as any)
                 .update({ status: newStatus, updated_at: new Date().toISOString() })
@@ -235,7 +233,7 @@ export default function SellerOrdersPage() {
             {/* Header */}
             <header className="page-header">
                 <div className="header-left">
-                    <Link href="/seller" className="back-btn">
+                    <Link href="/seller" className="back-btn" aria-label="Kembali ke Dashboard">
                         <ArrowLeft size={20} />
                     </Link>
                     <h1>Pesanan</h1>

@@ -305,6 +305,31 @@ export interface Database {
                     is_default?: boolean
                 }
             }
+            banners: {
+                Row: {
+                    id: string
+                    title: string
+                    image_url: string
+                    link: string | null
+                    is_active: boolean
+                    order: number
+                }
+                Insert: {
+                    id?: string
+                    title: string
+                    image_url: string
+                    link?: string | null
+                    is_active?: boolean
+                    order?: number
+                }
+                Update: {
+                    title?: string
+                    image_url?: string
+                    link?: string | null
+                    is_active?: boolean
+                    order?: number
+                }
+            }
         }
         Views: {
             [_ in never]: never

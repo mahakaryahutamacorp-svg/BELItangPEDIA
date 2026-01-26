@@ -14,118 +14,118 @@ const popularSearches = ['Mie Ayam', 'Kopi', 'Kerupuk', 'Elektronik', 'Fashion']
 const recentSearches = ['Pempek', 'Martabak', 'Smartphone']
 
 function SearchContent() {
-    const searchParams = useSearchParams()
-    const query = searchParams.get('q') || ''
-    const [searchQuery, setSearchQuery] = useState(query)
-    const [results, setResults] = useState(mockProducts)
+  const searchParams = useSearchParams()
+  const query = searchParams.get('q') || ''
+  const [searchQuery, setSearchQuery] = useState(query)
+  const [results, setResults] = useState(mockProducts)
 
-    useEffect(() => {
-        if (searchQuery) {
-            const filtered = mockProducts.filter(p =>
-                p.name.toLowerCase().includes(searchQuery.toLowerCase())
-            )
-            setResults(filtered)
-        } else {
-            setResults([])
-        }
-    }, [searchQuery])
+  useEffect(() => {
+    if (searchQuery) {
+      const filtered = mockProducts.filter(p =>
+        p.name.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+      setResults(filtered)
+    } else {
+      setResults([])
+    }
+  }, [searchQuery])
 
-    return (
-        <main className="main-content">
-            <div className="container">
-                {/* Search Bar */}
-                <div className="search-bar">
-                    <Link href="/" className="back-btn">
-                        <ArrowLeft size={20} />
-                    </Link>
-                    <div className="search-input-wrapper">
-                        <SearchIcon size={18} className="search-icon" />
-                        <input
-                            type="text"
-                            placeholder="Cari produk..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            autoFocus
-                        />
-                        {searchQuery && (
-                            <button className="clear-btn" onClick={() => setSearchQuery('')}>
-                                <X size={18} />
-                            </button>
-                        )}
-                    </div>
-                    <button className="filter-btn">
-                        <SlidersHorizontal size={20} />
-                    </button>
+  return (
+    <main className="main-content">
+      <div className="container">
+        {/* Search Bar */}
+        <div className="search-bar">
+          <Link href="/" className="back-btn">
+            <ArrowLeft size={20} />
+          </Link>
+          <div className="search-input-wrapper">
+            <SearchIcon size={18} className="search-icon" />
+            <input
+              type="text"
+              placeholder="Cari produk..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              autoFocus
+            />
+            {searchQuery && (
+              <button className="clear-btn" onClick={() => setSearchQuery('')} aria-label="Bersihkan pencarian">
+                <X size={18} />
+              </button>
+            )}
+          </div>
+          <button className="filter-btn" aria-label="Filter pencarian">
+            <SlidersHorizontal size={20} />
+          </button>
+        </div>
+
+        {/* No Query State */}
+        {!searchQuery && (
+          <>
+            {/* Recent Searches */}
+            {recentSearches.length > 0 && (
+              <div className="search-section">
+                <div className="section-header">
+                  <h2>Pencarian Terakhir</h2>
+                  <button className="clear-all">Hapus</button>
                 </div>
+                <div className="search-chips">
+                  {recentSearches.map((term) => (
+                    <button
+                      key={term}
+                      className="search-chip"
+                      onClick={() => setSearchQuery(term)}
+                    >
+                      {term}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
-                {/* No Query State */}
-                {!searchQuery && (
-                    <>
-                        {/* Recent Searches */}
-                        {recentSearches.length > 0 && (
-                            <div className="search-section">
-                                <div className="section-header">
-                                    <h2>Pencarian Terakhir</h2>
-                                    <button className="clear-all">Hapus</button>
-                                </div>
-                                <div className="search-chips">
-                                    {recentSearches.map((term) => (
-                                        <button
-                                            key={term}
-                                            className="search-chip"
-                                            onClick={() => setSearchQuery(term)}
-                                        >
-                                            {term}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Popular Searches */}
-                        <div className="search-section">
-                            <h2>Pencarian Populer</h2>
-                            <div className="search-chips">
-                                {popularSearches.map((term) => (
-                                    <button
-                                        key={term}
-                                        className="search-chip popular"
-                                        onClick={() => setSearchQuery(term)}
-                                    >
-                                        🔥 {term}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                    </>
-                )}
-
-                {/* Results */}
-                {searchQuery && (
-                    <div className="results-section">
-                        <p className="results-count">
-                            {results.length} hasil untuk "{searchQuery}"
-                        </p>
-                        {results.length > 0 ? (
-                            <div className="product-grid">
-                                {results.map((product) => (
-                                    <ProductCard key={product.id} product={product} />
-                                ))}
-                            </div>
-                        ) : (
-                            <div className="empty-state">
-                                <SearchIcon size={64} />
-                                <h2>Produk Tidak Ditemukan</h2>
-                                <p>Coba kata kunci lain atau jelajahi kategori</p>
-                                <Link href="/categories" className="btn btn-primary">
-                                    Lihat Kategori
-                                </Link>
-                            </div>
-                        )}
-                    </div>
-                )}
+            {/* Popular Searches */}
+            <div className="search-section">
+              <h2>Pencarian Populer</h2>
+              <div className="search-chips">
+                {popularSearches.map((term) => (
+                  <button
+                    key={term}
+                    className="search-chip popular"
+                    onClick={() => setSearchQuery(term)}
+                  >
+                    🔥 {term}
+                  </button>
+                ))}
+              </div>
             </div>
-            <style jsx>{`
+          </>
+        )}
+
+        {/* Results */}
+        {searchQuery && (
+          <div className="results-section">
+            <p className="results-count">
+              {results.length} hasil untuk &quot;{searchQuery}&quot;
+            </p>
+            {results.length > 0 ? (
+              <div className="product-grid">
+                {results.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+            ) : (
+              <div className="empty-state">
+                <SearchIcon size={64} />
+                <h2>Produk Tidak Ditemukan</h2>
+                <p>Coba kata kunci lain atau jelajahi kategori</p>
+                <Link href="/categories" className="btn btn-primary">
+                  Lihat Kategori
+                </Link>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+      <style jsx>{`
         .main-content {
           background: var(--bg-secondary);
           min-height: 100vh;
@@ -288,19 +288,19 @@ function SearchContent() {
           margin-bottom: var(--space-6);
         }
       `}</style>
-        </main>
-    )
+    </main>
+  )
 }
 
 export default function SearchPage() {
-    return (
-        <>
-            <Header />
-            <Suspense fallback={<div>Loading...</div>}>
-                <SearchContent />
-            </Suspense>
-            <Footer />
-            <MobileNav />
-        </>
-    )
+  return (
+    <>
+      <Header />
+      <Suspense fallback={<div>Loading...</div>}>
+        <SearchContent />
+      </Suspense>
+      <Footer />
+      <MobileNav />
+    </>
+  )
 }

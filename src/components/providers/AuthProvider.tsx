@@ -96,13 +96,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
                     // Try to create profile in database
                     try {
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         await (supabase.from('users') as any).insert({
                             id: authData.user.id,
                             email: authData.user.email,
-                            name: authData.user.user_metadata?.full_name || authData.user.email?.split('@')[0],
+                            full_name: authData.user.user_metadata?.full_name || authData.user.email?.split('@')[0],
                             phone: authData.user.user_metadata?.phone || '',
-                            role: 'user',
+                            role: 'buyer',
                         })
                     } catch (insertError) {
                         console.log('Could not auto-create profile:', insertError)
@@ -161,7 +160,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         if (!error && data.user) {
             // Create user profile in database
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             await (supabase.from('users') as any).insert({
                 id: data.user.id,
                 email: email,
