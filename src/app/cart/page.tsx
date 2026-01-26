@@ -1,14 +1,15 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import {
-    ChevronRight,
-    Minus,
-    Plus,
-    Trash2,
-    ShoppingCart,
-    Store,
-    Truck
+  ChevronRight,
+  Minus,
+  Plus,
+  Trash2,
+  ShoppingCart,
+  Store,
+  Truck
 } from 'lucide-react'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
@@ -17,179 +18,187 @@ import { useCartStore } from '@/store/cartStore'
 import { formatPrice, getStoreById } from '@/lib/mockData'
 
 export default function CartPage() {
-    const { items, updateQuantity, removeFromCart, getTotalPrice } = useCartStore()
+  const { items, updateQuantity, removeFromCart, getTotalPrice } = useCartStore()
 
-    const storeIds = Object.keys(items)
-    const isEmpty = storeIds.length === 0
+  const storeIds = Object.keys(items)
+  const isEmpty = storeIds.length === 0
 
-    return (
-        <>
-            <Header />
+  return (
+    <>
+      <Header />
 
-            <main className="cart-page">
-                {/* Breadcrumb */}
-                <div className="breadcrumb">
-                    <div className="container">
-                        <Link href="/">Beranda</Link>
-                        <ChevronRight size={14} />
-                        <span>Keranjang Belanja</span>
-                    </div>
-                </div>
+      <main className="cart-page">
+        {/* Breadcrumb */}
+        <div className="breadcrumb">
+          <div className="container">
+            <Link href="/">Beranda</Link>
+            <ChevronRight size={14} />
+            <span>Keranjang Belanja</span>
+          </div>
+        </div>
 
-                <div className="container">
-                    <h1 className="page-title">
-                        <ShoppingCart size={28} />
-                        Keranjang Belanja
-                    </h1>
+        <div className="container">
+          <h1 className="page-title">
+            <ShoppingCart size={28} />
+            Keranjang Belanja
+          </h1>
 
-                    {isEmpty ? (
-                        <div className="empty-cart">
-                            <div className="empty-icon">🛒</div>
-                            <h2>Keranjang Kosong</h2>
-                            <p>Yuk, mulai belanja dan isi keranjangmu!</p>
-                            <Link href="/products" className="btn btn-primary">
-                                Mulai Belanja
-                            </Link>
+          {isEmpty ? (
+            <div className="empty-cart">
+              <div className="empty-icon">🛒</div>
+              <h2>Keranjang Kosong</h2>
+              <p>Yuk, mulai belanja dan isi keranjangmu!</p>
+              <Link href="/products" className="btn btn-primary">
+                Mulai Belanja
+              </Link>
+            </div>
+          ) : (
+            <div className="cart-layout">
+              {/* Cart Items */}
+              <div className="cart-items">
+                {storeIds.map((storeId) => {
+                  const store = getStoreById(storeId)
+                  const storeItems = items[storeId]
+
+                  return (
+                    <div key={storeId} className="store-group">
+                      <div className="store-header">
+                        <div className="store-info">
+                          <Store size={18} />
+                          <span className="store-name">{store?.name || 'Toko'}</span>
+                          {store?.is_verified && <span className="verified">✓</span>}
                         </div>
-                    ) : (
-                        <div className="cart-layout">
-                            {/* Cart Items */}
-                            <div className="cart-items">
-                                {storeIds.map((storeId) => {
-                                    const store = getStoreById(storeId)
-                                    const storeItems = items[storeId]
+                      </div>
 
-                                    return (
-                                        <div key={storeId} className="store-group">
-                                            <div className="store-header">
-                                                <div className="store-info">
-                                                    <Store size={18} />
-                                                    <span className="store-name">{store?.name || 'Toko'}</span>
-                                                    {store?.is_verified && <span className="verified">✓</span>}
-                                                </div>
-                                            </div>
+                      <div className="items-list">
+                        {storeItems.map((item) => {
+                          const price = item.product.discount_price || item.product.price
 
-                                            <div className="items-list">
-                                                {storeItems.map((item) => {
-                                                    const price = item.product.discount_price || item.product.price
+                          return (
+                            <div key={`${item.product.id}-${JSON.stringify(item.selectedVariant)}`} className="cart-item">
+                              <div className="item-image">
+                                <Image
+                                  src={item.product.images[0]}
+                                  alt={item.product.name}
+                                  width={80}
+                                  height={80}
+                                  style={{ objectFit: 'cover' }}
+                                />
+                              </div>
 
-                                                    return (
-                                                        <div key={`${item.product.id}-${JSON.stringify(item.selectedVariant)}`} className="cart-item">
-                                                            <div className="item-image">
-                                                                <img src={item.product.images[0]} alt={item.product.name} />
-                                                            </div>
-
-                                                            <div className="item-details">
-                                                                <Link href={`/products/${item.product.id}`} className="item-name">
-                                                                    {item.product.name}
-                                                                </Link>
-                                                                {item.selectedVariant && (
-                                                                    <div className="item-variant">
-                                                                        {Object.entries(item.selectedVariant).map(([key, value]) => (
-                                                                            <span key={key}>{key}: {value}</span>
-                                                                        ))}
-                                                                    </div>
-                                                                )}
-                                                                <div className="item-price">
-                                                                    {formatPrice(price)}
-                                                                    {item.product.discount_price && (
-                                                                        <span className="original-price">
-                                                                            {formatPrice(item.product.price)}
-                                                                        </span>
-                                                                    )}
-                                                                </div>
-                                                            </div>
-
-                                                            <div className="item-actions">
-                                                                <div className="quantity-control">
-                                                                    <button
-                                                                        onClick={() => updateQuantity(
-                                                                            storeId,
-                                                                            item.product.id,
-                                                                            item.quantity - 1,
-                                                                            item.selectedVariant
-                                                                        )}
-                                                                        disabled={item.quantity <= 1}
-                                                                    >
-                                                                        <Minus size={14} />
-                                                                    </button>
-                                                                    <span>{item.quantity}</span>
-                                                                    <button
-                                                                        onClick={() => updateQuantity(
-                                                                            storeId,
-                                                                            item.product.id,
-                                                                            item.quantity + 1,
-                                                                            item.selectedVariant
-                                                                        )}
-                                                                        disabled={item.quantity >= item.product.stock}
-                                                                    >
-                                                                        <Plus size={14} />
-                                                                    </button>
-                                                                </div>
-                                                                <button
-                                                                    className="delete-btn"
-                                                                    onClick={() => removeFromCart(storeId, item.product.id, item.selectedVariant)}
-                                                                >
-                                                                    <Trash2 size={18} />
-                                                                </button>
-                                                            </div>
-
-                                                            <div className="item-subtotal">
-                                                                {formatPrice(price * item.quantity)}
-                                                            </div>
-                                                        </div>
-                                                    )
-                                                })}
-                                            </div>
-                                        </div>
-                                    )
-                                })}
-                            </div>
-
-                            {/* Order Summary */}
-                            <div className="order-summary">
-                                <div className="summary-card">
-                                    <h2>Ringkasan Pesanan</h2>
-
-                                    <div className="summary-row">
-                                        <span>Subtotal</span>
-                                        <span>{formatPrice(getTotalPrice())}</span>
-                                    </div>
-
-                                    <div className="summary-row shipping">
-                                        <span>
-                                            <Truck size={16} />
-                                            Ongkos Kirim
-                                        </span>
-                                        <span className="shipping-note">Dihitung saat checkout</span>
-                                    </div>
-
-                                    <div className="divider"></div>
-
-                                    <div className="summary-row total">
-                                        <span>Total</span>
-                                        <span>{formatPrice(getTotalPrice())}</span>
-                                    </div>
-
-                                    <Link href="/checkout" className="btn btn-primary btn-lg checkout-btn">
-                                        Checkout ({storeIds.reduce((acc, storeId) => acc + items[storeId].reduce((sum, item) => sum + item.quantity, 0), 0)} item)
-                                    </Link>
-
-                                    <div className="payment-info">
-                                        <span className="cod-badge">💵 COD</span>
-                                        <p>Bayar di tempat setelah barang diterima</p>
-                                    </div>
+                              <div className="item-details">
+                                <Link href={`/products/${item.product.id}`} className="item-name">
+                                  {item.product.name}
+                                </Link>
+                                {item.selectedVariant && (
+                                  <div className="item-variant">
+                                    {Object.entries(item.selectedVariant).map(([key, value]) => (
+                                      <span key={key}>{key}: {value}</span>
+                                    ))}
+                                  </div>
+                                )}
+                                <div className="item-price">
+                                  {formatPrice(price)}
+                                  {item.product.discount_price && (
+                                    <span className="original-price">
+                                      {formatPrice(item.product.price)}
+                                    </span>
+                                  )}
                                 </div>
+                              </div>
+
+                              <div className="item-actions">
+                                <div className="quantity-control">
+                                  <button
+                                    onClick={() => updateQuantity(
+                                      storeId,
+                                      item.product.id,
+                                      item.quantity - 1,
+                                      item.selectedVariant
+                                    )}
+                                    disabled={item.quantity <= 1}
+                                  >
+                                    <Minus size={14} />
+                                  </button>
+                                  <span>{item.quantity}</span>
+                                  <button
+                                    onClick={() => updateQuantity(
+                                      storeId,
+                                      item.product.id,
+                                      item.quantity + 1,
+                                      item.selectedVariant
+                                    )}
+                                    disabled={item.quantity >= item.product.stock}
+                                    aria-label="Tambah jumlah"
+                                  >
+                                    <Plus size={14} />
+                                  </button>
+                                </div>
+                                <button
+                                  className="delete-btn"
+                                  onClick={() => removeFromCart(storeId, item.product.id, item.selectedVariant)}
+                                  aria-label="Hapus item"
+                                >
+                                  <Trash2 size={18} />
+                                </button>
+                              </div>
+
+                              <div className="item-subtotal">
+                                {formatPrice(price * item.quantity)}
+                              </div>
                             </div>
-                        </div>
-                    )}
+                          )
+                        })}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+
+              {/* Order Summary */}
+              <div className="order-summary">
+                <div className="summary-card">
+                  <h2>Ringkasan Pesanan</h2>
+
+                  <div className="summary-row">
+                    <span>Subtotal</span>
+                    <span>{formatPrice(getTotalPrice())}</span>
+                  </div>
+
+                  <div className="summary-row shipping">
+                    <span>
+                      <Truck size={16} />
+                      Ongkos Kirim
+                    </span>
+                    <span className="shipping-note">Dihitung saat checkout</span>
+                  </div>
+
+                  <div className="divider"></div>
+
+                  <div className="summary-row total">
+                    <span>Total</span>
+                    <span>{formatPrice(getTotalPrice())}</span>
+                  </div>
+
+                  <Link href="/checkout" className="btn btn-primary btn-lg checkout-btn">
+                    Checkout ({storeIds.reduce((acc, storeId) => acc + items[storeId].reduce((sum, item) => sum + item.quantity, 0), 0)} item)
+                  </Link>
+
+                  <div className="payment-info">
+                    <span className="cod-badge">💵 COD</span>
+                    <p>Bayar di tempat setelah barang diterima</p>
+                  </div>
                 </div>
-            </main>
+              </div>
+            </div>
+          )}
+        </div>
+      </main>
 
-            <Footer />
-            <MobileNav />
+      <Footer />
+      <MobileNav />
 
-            <style jsx>{`
+      <style jsx>{`
         .cart-page {
           min-height: 100vh;
           background: var(--bg-secondary);
@@ -519,6 +528,6 @@ export default function CartPage() {
           color: var(--secondary-700);
         }
       `}</style>
-        </>
-    )
+    </>
+  )
 }

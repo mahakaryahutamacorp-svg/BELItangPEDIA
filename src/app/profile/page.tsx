@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowLeft, User, Camera, Package, Heart, MapPin, CreditCard, LogOut, ChevronRight } from 'lucide-react'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
@@ -9,33 +10,33 @@ import { useAuthStore } from '@/store/authStore'
 import { useRouter } from 'next/navigation'
 
 export default function ProfilePage() {
-    const { user, isAuthenticated, logout } = useAuthStore()
-    const router = useRouter()
+  const { user, isAuthenticated, logout } = useAuthStore()
+  const router = useRouter()
 
-    const handleLogout = () => {
-        logout()
-        router.push('/')
-    }
+  const handleLogout = () => {
+    logout()
+    router.push('/')
+  }
 
-    if (!isAuthenticated) {
-        return (
-            <>
-                <Header />
-                <main className="main-content">
-                    <div className="container">
-                        <div className="login-prompt">
-                            <User size={64} />
-                            <h2>Masuk untuk Melanjutkan</h2>
-                            <p>Silakan masuk untuk melihat profil Anda</p>
-                            <Link href="/auth/login" className="btn btn-primary">
-                                Masuk Sekarang
-                            </Link>
-                        </div>
-                    </div>
-                </main>
-                <Footer />
-                <MobileNav />
-                <style jsx>{`
+  if (!isAuthenticated) {
+    return (
+      <>
+        <Header />
+        <main className="main-content">
+          <div className="container">
+            <div className="login-prompt">
+              <User size={64} />
+              <h2>Masuk untuk Melanjutkan</h2>
+              <p>Silakan masuk untuk melihat profil Anda</p>
+              <Link href="/auth/login" className="btn btn-primary">
+                Masuk Sekarang
+              </Link>
+            </div>
+          </div>
+        </main>
+        <Footer />
+        <MobileNav />
+        <style jsx>{`
           .main-content {
             background: var(--bg-secondary);
             min-height: 100vh;
@@ -64,84 +65,89 @@ export default function ProfilePage() {
             margin-bottom: var(--space-6);
           }
         `}</style>
-            </>
-        )
-    }
+      </>
+    )
+  }
 
-    const menuItems = [
-        { icon: Package, label: 'Pesanan Saya', href: '/orders', count: 2 },
-        { icon: Heart, label: 'Wishlist', href: '/wishlist', count: 4 },
-        { icon: MapPin, label: 'Alamat Pengiriman', href: '/settings' },
-        { icon: CreditCard, label: 'Metode Pembayaran', href: '/settings' },
-    ]
+  const menuItems = [
+    { icon: Package, label: 'Pesanan Saya', href: '/orders', count: 2 },
+    { icon: Heart, label: 'Wishlist', href: '/wishlist', count: 4 },
+    { icon: MapPin, label: 'Alamat Pengiriman', href: '/settings' },
+    { icon: CreditCard, label: 'Metode Pembayaran', href: '/settings' },
+  ]
 
-    return (
-        <>
-            <Header />
-            <main className="main-content">
-                <div className="container">
-                    {/* Breadcrumb */}
-                    <div className="breadcrumb">
-                        <Link href="/" className="back-link">
-                            <ArrowLeft size={20} />
-                            <span>Kembali</span>
-                        </Link>
+  return (
+    <>
+      <Header />
+      <main className="main-content">
+        <div className="container">
+          {/* Breadcrumb */}
+          <div className="breadcrumb">
+            <Link href="/" className="back-link">
+              <ArrowLeft size={20} />
+              <span>Kembali</span>
+            </Link>
+          </div>
+
+          {/* Profile Header */}
+          <div className="profile-header">
+            <div className="avatar-wrapper">
+              <div className="avatar" style={{ position: 'relative', width: '80px', height: '80px', borderRadius: 'var(--radius-full)', overflow: 'hidden' }}>
+                {user?.avatar_url ? (
+                  <Image
+                    src={user.avatar_url}
+                    alt={user.full_name}
+                    fill
+                    style={{ objectFit: 'cover' }}
+                  />
+                ) : (
+                  <User size={40} />
+                )}
+              </div>
+              <button className="avatar-edit" aria-label="Ubah foto profil">
+                <Camera size={14} />
+              </button>
+            </div>
+            <div className="profile-info">
+              <h1>{user?.full_name || 'User'}</h1>
+              <p>{user?.email}</p>
+              <p className="phone">{user?.phone || '-'}</p>
+            </div>
+            <Link href="/settings" className="edit-btn">Edit Profil</Link>
+          </div>
+
+          {/* Menu Items */}
+          <div className="menu-section">
+            {menuItems.map((item) => {
+              const Icon = item.icon
+              return (
+                <Link key={item.label} href={item.href} className="menu-item">
+                  <div className="menu-left">
+                    <div className="menu-icon">
+                      <Icon size={20} />
                     </div>
+                    <span>{item.label}</span>
+                  </div>
+                  <div className="menu-right">
+                    {item.count && <span className="count">{item.count}</span>}
+                    <ChevronRight size={18} />
+                  </div>
+                </Link>
+              )
+            })}
+          </div>
 
-                    {/* Profile Header */}
-                    <div className="profile-header">
-                        <div className="avatar-wrapper">
-                            <div className="avatar">
-                                {user?.avatar_url ? (
-                                    <img src={user.avatar_url} alt={user.full_name} />
-                                ) : (
-                                    <User size={40} />
-                                )}
-                            </div>
-                            <button className="avatar-edit">
-                                <Camera size={14} />
-                            </button>
-                        </div>
-                        <div className="profile-info">
-                            <h1>{user?.full_name || 'User'}</h1>
-                            <p>{user?.email}</p>
-                            <p className="phone">{user?.phone || '-'}</p>
-                        </div>
-                        <Link href="/settings" className="edit-btn">Edit Profil</Link>
-                    </div>
+          {/* Logout Button */}
+          <button className="logout-btn" onClick={handleLogout}>
+            <LogOut size={20} />
+            <span>Keluar</span>
+          </button>
+        </div>
+      </main>
+      <Footer />
+      <MobileNav />
 
-                    {/* Menu Items */}
-                    <div className="menu-section">
-                        {menuItems.map((item) => {
-                            const Icon = item.icon
-                            return (
-                                <Link key={item.label} href={item.href} className="menu-item">
-                                    <div className="menu-left">
-                                        <div className="menu-icon">
-                                            <Icon size={20} />
-                                        </div>
-                                        <span>{item.label}</span>
-                                    </div>
-                                    <div className="menu-right">
-                                        {item.count && <span className="count">{item.count}</span>}
-                                        <ChevronRight size={18} />
-                                    </div>
-                                </Link>
-                            )
-                        })}
-                    </div>
-
-                    {/* Logout Button */}
-                    <button className="logout-btn" onClick={handleLogout}>
-                        <LogOut size={20} />
-                        <span>Keluar</span>
-                    </button>
-                </div>
-            </main>
-            <Footer />
-            <MobileNav />
-
-            <style jsx>{`
+      <style jsx>{`
         .main-content {
           background: var(--bg-secondary);
           min-height: 100vh;
@@ -310,6 +316,6 @@ export default function ProfilePage() {
           font-weight: 500;
         }
       `}</style>
-        </>
-    )
+    </>
+  )
 }

@@ -3,19 +3,20 @@
 import { useState } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import {
-    ChevronLeft,
-    Heart,
-    Share2,
-    Star,
-    Minus,
-    Plus,
-    ShoppingCart,
-    MessageCircle,
-    MapPin,
-    Truck,
-    Store,
-    ChevronRight
+  ChevronLeft,
+  Heart,
+  Share2,
+  Star,
+  Minus,
+  Plus,
+  ShoppingCart,
+  MessageCircle,
+  MapPin,
+  Truck,
+  Store,
+  ChevronRight
 } from 'lucide-react'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
@@ -23,261 +24,275 @@ import MobileNav from '@/components/layout/MobileNav'
 import ProductCard from '@/components/ui/ProductCard'
 import { useCartStore } from '@/store/cartStore'
 import {
-    getProductById,
-    formatPrice,
-    calculateDiscount,
-    mockProducts,
-    shippingOptions
+  getProductById,
+  formatPrice,
+  calculateDiscount,
+  mockProducts,
+  shippingOptions
 } from '@/lib/mockData'
 
 export default function ProductDetailPage() {
-    const params = useParams()
-    const productId = params.id as string
-    const product = getProductById(productId) || mockProducts[0]
+  const params = useParams()
+  const productId = params.id as string
+  const product = getProductById(productId) || mockProducts[0]
 
-    const [selectedImage, setSelectedImage] = useState(0)
-    const [quantity, setQuantity] = useState(1)
-    const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({})
-    const addToCart = useCartStore((state) => state.addToCart)
+  const [selectedImage, setSelectedImage] = useState(0)
+  const [quantity, setQuantity] = useState(1)
+  const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({})
+  const addToCart = useCartStore((state) => state.addToCart)
 
-    const hasDiscount = product.discount_price !== null
-    const relatedProducts = mockProducts.filter(p => p.id !== product.id).slice(0, 4)
+  const hasDiscount = product.discount_price !== null
+  const relatedProducts = mockProducts.filter(p => p.id !== product.id).slice(0, 4)
 
-    const handleAddToCart = () => {
-        addToCart(product, quantity, Object.keys(selectedVariants).length > 0 ? selectedVariants : null)
-        // Show toast or feedback
-        alert('Produk ditambahkan ke keranjang!')
-    }
+  const handleAddToCart = () => {
+    addToCart(product, quantity, Object.keys(selectedVariants).length > 0 ? selectedVariants : null)
+    // Show toast or feedback
+    alert('Produk ditambahkan ke keranjang!')
+  }
 
-    const handleBuyNow = () => {
-        addToCart(product, quantity, Object.keys(selectedVariants).length > 0 ? selectedVariants : null)
-        window.location.href = '/cart'
-    }
+  const handleBuyNow = () => {
+    addToCart(product, quantity, Object.keys(selectedVariants).length > 0 ? selectedVariants : null)
+    window.location.href = '/cart'
+  }
 
-    return (
-        <>
-            <Header />
+  return (
+    <>
+      <Header />
 
-            <main className="product-detail-page">
-                {/* Breadcrumb */}
-                <div className="breadcrumb">
-                    <div className="container">
-                        <Link href="/">Beranda</Link>
-                        <ChevronRight size={14} />
-                        <Link href="/products">Produk</Link>
-                        <ChevronRight size={14} />
-                        <span>{product.name}</span>
+      <main className="product-detail-page">
+        {/* Breadcrumb */}
+        <div className="breadcrumb">
+          <div className="container">
+            <Link href="/">Beranda</Link>
+            <ChevronRight size={14} />
+            <Link href="/products">Produk</Link>
+            <ChevronRight size={14} />
+            <span>{product.name}</span>
+          </div>
+        </div>
+
+        <div className="container">
+          <div className="product-layout">
+            {/* Image Gallery */}
+            <div className="product-gallery">
+              <div className="main-image" style={{ position: 'relative', aspectRatio: '1', borderRadius: 'var(--radius-lg)', overflow: 'hidden' }}>
+                <Image
+                  src={product.images[selectedImage]}
+                  alt={product.name}
+                  fill
+                  style={{ objectFit: 'cover' }}
+                  priority
+                />
+                {hasDiscount && (
+                  <span className="discount-badge">
+                    -{calculateDiscount(product.price, product.discount_price!)}%
+                  </span>
+                )}
+              </div>
+              <div className="thumbnail-list">
+                {product.images.map((image, index) => (
+                  <button
+                    key={index}
+                    className={`thumbnail ${selectedImage === index ? 'active' : ''}`}
+                    onClick={() => setSelectedImage(index)}
+                    aria-label={`Lihat gambar ${index + 1}`}
+                  >
+                    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+                      <Image
+                        src={image}
+                        alt={`${product.name} ${index + 1}`}
+                        fill
+                        style={{ objectFit: 'cover' }}
+                      />
                     </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Product Info */}
+            <div className="product-info">
+              <h1 className="product-title">{product.name}</h1>
+
+              <div className="product-meta">
+                <div className="rating">
+                  <Star size={16} fill="currentColor" className="star" />
+                  <span className="rating-value">{product.rating}</span>
+                  <span className="rating-count">({product.total_reviews} ulasan)</span>
                 </div>
+                <span className="divider">•</span>
+                <span className="sold">Terjual {product.total_sold}+</span>
+              </div>
 
-                <div className="container">
-                    <div className="product-layout">
-                        {/* Image Gallery */}
-                        <div className="product-gallery">
-                            <div className="main-image">
-                                <img
-                                    src={product.images[selectedImage]}
-                                    alt={product.name}
-                                />
-                                {hasDiscount && (
-                                    <span className="discount-badge">
-                                        -{calculateDiscount(product.price, product.discount_price!)}%
-                                    </span>
-                                )}
-                            </div>
-                            <div className="thumbnail-list">
-                                {product.images.map((image, index) => (
-                                    <button
-                                        key={index}
-                                        className={`thumbnail ${selectedImage === index ? 'active' : ''}`}
-                                        onClick={() => setSelectedImage(index)}
-                                    >
-                                        <img src={image} alt={`${product.name} ${index + 1}`} />
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
+              <div className="product-price">
+                <span className="current-price">
+                  {formatPrice(product.discount_price || product.price)}
+                </span>
+                {hasDiscount && (
+                  <>
+                    <span className="original-price">{formatPrice(product.price)}</span>
+                    <span className="discount-percent">
+                      -{calculateDiscount(product.price, product.discount_price!)}%
+                    </span>
+                  </>
+                )}
+              </div>
 
-                        {/* Product Info */}
-                        <div className="product-info">
-                            <h1 className="product-title">{product.name}</h1>
-
-                            <div className="product-meta">
-                                <div className="rating">
-                                    <Star size={16} fill="currentColor" className="star" />
-                                    <span className="rating-value">{product.rating}</span>
-                                    <span className="rating-count">({product.total_reviews} ulasan)</span>
-                                </div>
-                                <span className="divider">•</span>
-                                <span className="sold">Terjual {product.total_sold}+</span>
-                            </div>
-
-                            <div className="product-price">
-                                <span className="current-price">
-                                    {formatPrice(product.discount_price || product.price)}
-                                </span>
-                                {hasDiscount && (
-                                    <>
-                                        <span className="original-price">{formatPrice(product.price)}</span>
-                                        <span className="discount-percent">
-                                            -{calculateDiscount(product.price, product.discount_price!)}%
-                                        </span>
-                                    </>
-                                )}
-                            </div>
-
-                            {/* Variants */}
-                            {product.variants && product.variants.map((variant) => (
-                                <div key={variant.id} className="variant-section">
-                                    <h4>{variant.name}: <span>{selectedVariants[variant.name] || 'Pilih'}</span></h4>
-                                    <div className="variant-options">
-                                        {variant.options.map((option) => (
-                                            <button
-                                                key={option.id}
-                                                className={`variant-btn ${selectedVariants[variant.name] === option.value ? 'active' : ''}`}
-                                                onClick={() => setSelectedVariants(prev => ({
-                                                    ...prev,
-                                                    [variant.name]: option.value
-                                                }))}
-                                            >
-                                                {option.value}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-                            ))}
-
-                            {/* Quantity */}
-                            <div className="quantity-section">
-                                <h4>Jumlah</h4>
-                                <div className="quantity-control">
-                                    <button
-                                        onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                                        disabled={quantity <= 1}
-                                    >
-                                        <Minus size={16} />
-                                    </button>
-                                    <span>{quantity}</span>
-                                    <button
-                                        onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
-                                        disabled={quantity >= product.stock}
-                                    >
-                                        <Plus size={16} />
-                                    </button>
-                                </div>
-                                <span className="stock-info">Stok: {product.stock}</span>
-                            </div>
-
-                            {/* Shipping */}
-                            <div className="shipping-section">
-                                <h4>Pengiriman</h4>
-                                <div className="shipping-location">
-                                    <MapPin size={16} />
-                                    <span>Dikirim dari <strong>Belitang, OKU Timur</strong></span>
-                                </div>
-                                <div className="shipping-options">
-                                    {shippingOptions.map((option) => (
-                                        <div key={option.id} className="shipping-option">
-                                            <span className="shipping-icon">{option.icon}</span>
-                                            <div className="shipping-info">
-                                                <strong>{option.name}</strong>
-                                                <span>{option.estimated_days}</span>
-                                            </div>
-                                            <span className="shipping-price">
-                                                {option.price === 0 ? 'Gratis' : formatPrice(option.price)}
-                                            </span>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* Actions */}
-                            <div className="product-actions">
-                                <button className="btn-chat">
-                                    <MessageCircle size={20} />
-                                    Chat
-                                </button>
-                                <button className="btn-wishlist">
-                                    <Heart size={20} />
-                                </button>
-                                <button className="btn-cart" onClick={handleAddToCart}>
-                                    <ShoppingCart size={20} />
-                                    Keranjang
-                                </button>
-                                <button className="btn-buy" onClick={handleBuyNow}>
-                                    Beli Sekarang
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Store Card */}
-                        <div className="store-card">
-                            {product.store && (
-                                <Link href={`/store/${product.store.id}`} className="store-link">
-                                    <img
-                                        src={product.store.logo_url || ''}
-                                        alt={product.store.name}
-                                        className="store-logo"
-                                    />
-                                    <div className="store-info">
-                                        <h3>
-                                            {product.store.name}
-                                            {product.store.is_verified && <span className="verified">✓</span>}
-                                        </h3>
-                                        <p>
-                                            <Star size={12} fill="currentColor" className="star" />
-                                            {product.store.rating} • {product.store.distance} km
-                                        </p>
-                                    </div>
-                                    <button className="btn-visit">
-                                        <Store size={16} />
-                                        Kunjungi
-                                    </button>
-                                </Link>
-                            )}
-                        </div>
-                    </div>
-
-                    {/* Description */}
-                    <div className="product-description">
-                        <h2>Deskripsi Produk</h2>
-                        <p>{product.description}</p>
-                    </div>
-
-                    {/* Reviews */}
-                    <div className="product-reviews">
-                        <div className="reviews-header">
-                            <h2>Ulasan Pembeli</h2>
-                            <div className="reviews-summary">
-                                <div className="rating-big">
-                                    <Star size={24} fill="currentColor" className="star" />
-                                    <span className="rating-value">{product.rating}</span>
-                                    <span className="rating-max">/5.0</span>
-                                </div>
-                                <span className="total-reviews">{product.total_reviews} ulasan</span>
-                            </div>
-                        </div>
-                        <div className="reviews-empty">
-                            <p>Belum ada ulasan untuk produk ini.</p>
-                        </div>
-                    </div>
-
-                    {/* Related Products */}
-                    <div className="related-products">
-                        <h2>Produk Serupa</h2>
-                        <div className="products-grid">
-                            {relatedProducts.map((p) => (
-                                <ProductCard key={p.id} product={p} />
-                            ))}
-                        </div>
-                    </div>
+              {/* Variants */}
+              {product.variants && product.variants.map((variant) => (
+                <div key={variant.id} className="variant-section">
+                  <h4>{variant.name}: <span>{selectedVariants[variant.name] || 'Pilih'}</span></h4>
+                  <div className="variant-options">
+                    {variant.options.map((option) => (
+                      <button
+                        key={option.id}
+                        className={`variant-btn ${selectedVariants[variant.name] === option.value ? 'active' : ''}`}
+                        onClick={() => setSelectedVariants(prev => ({
+                          ...prev,
+                          [variant.name]: option.value
+                        }))}
+                      >
+                        {option.value}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-            </main>
+              ))}
 
-            <Footer />
-            <MobileNav />
+              {/* Quantity */}
+              <div className="quantity-section">
+                <h4>Jumlah</h4>
+                <div className="quantity-control">
+                  <button
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    disabled={quantity <= 1}
+                  >
+                    <Minus size={16} />
+                  </button>
+                  <span>{quantity}</span>
+                  <button
+                    onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
+                    disabled={quantity >= product.stock}
+                  >
+                    <Plus size={16} />
+                  </button>
+                </div>
+                <span className="stock-info">Stok: {product.stock}</span>
+              </div>
 
-            <style jsx>{`
+              {/* Shipping */}
+              <div className="shipping-section">
+                <h4>Pengiriman</h4>
+                <div className="shipping-location">
+                  <MapPin size={16} />
+                  <span>Dikirim dari <strong>Belitang, OKU Timur</strong></span>
+                </div>
+                <div className="shipping-options">
+                  {shippingOptions.map((option) => (
+                    <div key={option.id} className="shipping-option">
+                      <span className="shipping-icon">{option.icon}</span>
+                      <div className="shipping-info">
+                        <strong>{option.name}</strong>
+                        <span>{option.estimated_days}</span>
+                      </div>
+                      <span className="shipping-price">
+                        {option.price === 0 ? 'Gratis' : formatPrice(option.price)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="product-actions">
+                <button className="btn-chat">
+                  <MessageCircle size={20} />
+                  Chat
+                </button>
+                <button className="btn-wishlist">
+                  <Heart size={20} />
+                </button>
+                <button className="btn-cart" onClick={handleAddToCart}>
+                  <ShoppingCart size={20} />
+                  Keranjang
+                </button>
+                <button className="btn-buy" onClick={handleBuyNow}>
+                  Beli Sekarang
+                </button>
+              </div>
+            </div>
+
+            {/* Store Card */}
+            <div className="store-card">
+              {product.store && (
+                <Link href={`/store/${product.store.id}`} className="store-link">
+                  <div style={{ position: 'relative', width: '56px', height: '56px', borderRadius: 'var(--radius-lg)', overflow: 'hidden', flexShrink: 0 }}>
+                    <Image
+                      src={product.store.logo_url || ''}
+                      alt={product.store.name}
+                      fill
+                      style={{ objectFit: 'cover' }}
+                    />
+                  </div>
+                  <div className="store-info">
+                    <h3>
+                      {product.store.name}
+                      {product.store.is_verified && <span className="verified">✓</span>}
+                    </h3>
+                    <p>
+                      <Star size={12} fill="currentColor" className="star" />
+                      {product.store.rating} • {product.store.distance} km
+                    </p>
+                  </div>
+                  <button className="btn-visit">
+                    <Store size={16} />
+                    Kunjungi
+                  </button>
+                </Link>
+              )}
+            </div>
+          </div>
+
+          {/* Description */}
+          <div className="product-description">
+            <h2>Deskripsi Produk</h2>
+            <p>{product.description}</p>
+          </div>
+
+          {/* Reviews */}
+          <div className="product-reviews">
+            <div className="reviews-header">
+              <h2>Ulasan Pembeli</h2>
+              <div className="reviews-summary">
+                <div className="rating-big">
+                  <Star size={24} fill="currentColor" className="star" />
+                  <span className="rating-value">{product.rating}</span>
+                  <span className="rating-max">/5.0</span>
+                </div>
+                <span className="total-reviews">{product.total_reviews} ulasan</span>
+              </div>
+            </div>
+            <div className="reviews-empty">
+              <p>Belum ada ulasan untuk produk ini.</p>
+            </div>
+          </div>
+
+          {/* Related Products */}
+          <div className="related-products">
+            <h2>Produk Serupa</h2>
+            <div className="products-grid">
+              {relatedProducts.map((p) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <Footer />
+      <MobileNav />
+
+      <style jsx>{`
         .product-detail-page {
           min-height: 100vh;
           background: var(--bg-secondary);
@@ -841,6 +856,6 @@ export default function ProductDetailPage() {
           }
         }
       `}</style>
-        </>
-    )
+    </>
+  )
 }

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image' // Added Image import
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/store/authStore'
 import {
@@ -307,11 +308,12 @@ export default function AdminBannersPage() {
                                     Gambar Banner
                                 </label>
                                 {formData.image_url ? (
-                                    <div style={{ position: 'relative' }}>
-                                        <img
+                                    <div style={{ position: 'relative', width: '100%', height: '150px', borderRadius: '8px', overflow: 'hidden' }}>
+                                        <Image
                                             src={formData.image_url}
                                             alt="Preview"
-                                            style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '8px' }}
+                                            fill
+                                            style={{ objectFit: 'cover' }}
                                         />
                                         <button
                                             onClick={() => setFormData(prev => ({ ...prev, image_url: '' }))}
@@ -491,16 +493,6 @@ export default function AdminBannersPage() {
                                 }}
                             >
                                 <GripVertical size={20} color="#ccc" style={{ cursor: 'grab' }} />
-                                <img
-                                    src={banner.image_url}
-                                    alt={banner.title}
-                                    style={{
-                                        width: '100px',
-                                        height: '50px',
-                                        objectFit: 'cover',
-                                        borderRadius: '6px'
-                                    }}
-                                />
                                 <div style={{ flex: 1 }}>
                                     <p style={{ fontWeight: 600, fontSize: '14px' }}>{banner.title}</p>
                                     <p style={{ fontSize: '12px', color: '#999' }}>

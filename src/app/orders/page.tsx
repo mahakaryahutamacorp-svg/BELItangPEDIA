@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowLeft, Package, Truck, CheckCircle, Clock, ChevronRight } from 'lucide-react'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
@@ -8,160 +9,165 @@ import MobileNav from '@/components/layout/MobileNav'
 import { useState } from 'react'
 
 const orders = [
-    {
-        id: 'ORD001',
-        date: '19 Jan 2026',
-        status: 'shipping',
-        statusText: 'Sedang Dikirim',
-        items: [
-            { name: 'Mie Ayam Khas Belitang', qty: 2, price: 30000, image: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=100' }
-        ],
-        total: 60000
-    },
-    {
-        id: 'ORD002',
-        date: '18 Jan 2026',
-        status: 'processing',
-        statusText: 'Diproses',
-        items: [
-            { name: 'Kopi Robusta OKU', qty: 1, price: 45000, image: 'https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=100' }
-        ],
-        total: 45000
-    },
-    {
-        id: 'ORD003',
-        date: '15 Jan 2026',
-        status: 'completed',
-        statusText: 'Selesai',
-        items: [
-            { name: 'Kerupuk Kemplang', qty: 3, price: 25000, image: 'https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=100' }
-        ],
-        total: 75000
-    }
+  {
+    id: 'ORD001',
+    date: '19 Jan 2026',
+    status: 'shipping',
+    statusText: 'Sedang Dikirim',
+    items: [
+      { name: 'Mie Ayam Khas Belitang', qty: 2, price: 30000, image: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=100' }
+    ],
+    total: 60000
+  },
+  {
+    id: 'ORD002',
+    date: '18 Jan 2026',
+    status: 'processing',
+    statusText: 'Diproses',
+    items: [
+      { name: 'Kopi Robusta OKU', qty: 1, price: 45000, image: 'https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=100' }
+    ],
+    total: 45000
+  },
+  {
+    id: 'ORD003',
+    date: '15 Jan 2026',
+    status: 'completed',
+    statusText: 'Selesai',
+    items: [
+      { name: 'Kerupuk Kemplang', qty: 3, price: 25000, image: 'https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=100' }
+    ],
+    total: 75000
+  }
 ]
 
 export default function OrdersPage() {
-    const [activeTab, setActiveTab] = useState('all')
+  const [activeTab, setActiveTab] = useState('all')
 
-    const tabs = [
-        { id: 'all', label: 'Semua' },
-        { id: 'processing', label: 'Diproses' },
-        { id: 'shipping', label: 'Dikirim' },
-        { id: 'completed', label: 'Selesai' }
-    ]
+  const tabs = [
+    { id: 'all', label: 'Semua' },
+    { id: 'processing', label: 'Diproses' },
+    { id: 'shipping', label: 'Dikirim' },
+    { id: 'completed', label: 'Selesai' }
+  ]
 
-    const filteredOrders = activeTab === 'all'
-        ? orders
-        : orders.filter(o => o.status === activeTab)
+  const filteredOrders = activeTab === 'all'
+    ? orders
+    : orders.filter(o => o.status === activeTab)
 
-    const formatPrice = (price: number) => {
-        return new Intl.NumberFormat('id-ID', {
-            style: 'currency',
-            currency: 'IDR',
-            minimumFractionDigits: 0
-        }).format(price)
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0
+    }).format(price)
+  }
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'shipping': return Truck
+      case 'processing': return Clock
+      case 'completed': return CheckCircle
+      default: return Package
     }
+  }
 
-    const getStatusIcon = (status: string) => {
-        switch (status) {
-            case 'shipping': return Truck
-            case 'processing': return Clock
-            case 'completed': return CheckCircle
-            default: return Package
-        }
-    }
+  return (
+    <>
+      <Header />
+      <main className="main-content">
+        <div className="container">
+          {/* Breadcrumb */}
+          <div className="breadcrumb">
+            <Link href="/profile" className="back-link">
+              <ArrowLeft size={20} />
+              <span>Profil</span>
+            </Link>
+          </div>
 
-    return (
-        <>
-            <Header />
-            <main className="main-content">
-                <div className="container">
-                    {/* Breadcrumb */}
-                    <div className="breadcrumb">
-                        <Link href="/profile" className="back-link">
-                            <ArrowLeft size={20} />
-                            <span>Profil</span>
-                        </Link>
+          {/* Page Header */}
+          <div className="page-header">
+            <h1>Pesanan Saya</h1>
+          </div>
+
+          {/* Tabs */}
+          <div className="tabs">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                className={`tab ${activeTab === tab.id ? 'active' : ''}`}
+                onClick={() => setActiveTab(tab.id)}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Orders List */}
+          <div className="orders-list">
+            {filteredOrders.length > 0 ? (
+              filteredOrders.map((order) => {
+                const StatusIcon = getStatusIcon(order.status)
+                return (
+                  <div key={order.id} className="order-card">
+                    <div className="order-header">
+                      <div className="order-id">
+                        <Package size={16} />
+                        <span>{order.id}</span>
+                      </div>
+                      <div className={`order-status ${order.status}`}>
+                        <StatusIcon size={14} />
+                        <span>{order.statusText}</span>
+                      </div>
                     </div>
-
-                    {/* Page Header */}
-                    <div className="page-header">
-                        <h1>Pesanan Saya</h1>
+                    <div className="order-items">
+                      {order.items.map((item, idx) => (
+                        <div key={idx} className="order-item">
+                          <div className="item-image" style={{ position: 'relative', width: '60px', height: '60px' }}>
+                            <Image
+                              src={item.image}
+                              alt={item.name}
+                              fill
+                              style={{ objectFit: 'cover' }}
+                            />
+                          </div>
+                          <div className="item-info">
+                            <h3>{item.name}</h3>
+                            <p>{item.qty} x {formatPrice(item.price)}</p>
+                          </div>
+                        </div>
+                      ))}
                     </div>
-
-                    {/* Tabs */}
-                    <div className="tabs">
-                        {tabs.map((tab) => (
-                            <button
-                                key={tab.id}
-                                className={`tab ${activeTab === tab.id ? 'active' : ''}`}
-                                onClick={() => setActiveTab(tab.id)}
-                            >
-                                {tab.label}
-                            </button>
-                        ))}
+                    <div className="order-footer">
+                      <div className="order-total">
+                        <span>Total:</span>
+                        <span className="total-price">{formatPrice(order.total)}</span>
+                      </div>
+                      <Link href={`/orders/${order.id}`} className="detail-btn">
+                        <span>Detail</span>
+                        <ChevronRight size={16} />
+                      </Link>
                     </div>
+                  </div>
+                )
+              })
+            ) : (
+              <div className="empty-state">
+                <Package size={64} />
+                <h2>Belum Ada Pesanan</h2>
+                <p>Pesanan Anda akan muncul di sini</p>
+                <Link href="/products" className="btn btn-primary">
+                  Mulai Belanja
+                </Link>
+              </div>
+            )}
+          </div>
+        </div>
+      </main>
+      <Footer />
+      <MobileNav />
 
-                    {/* Orders List */}
-                    <div className="orders-list">
-                        {filteredOrders.length > 0 ? (
-                            filteredOrders.map((order) => {
-                                const StatusIcon = getStatusIcon(order.status)
-                                return (
-                                    <div key={order.id} className="order-card">
-                                        <div className="order-header">
-                                            <div className="order-id">
-                                                <Package size={16} />
-                                                <span>{order.id}</span>
-                                            </div>
-                                            <div className={`order-status ${order.status}`}>
-                                                <StatusIcon size={14} />
-                                                <span>{order.statusText}</span>
-                                            </div>
-                                        </div>
-                                        <div className="order-items">
-                                            {order.items.map((item, idx) => (
-                                                <div key={idx} className="order-item">
-                                                    <div className="item-image">
-                                                        <img src={item.image} alt={item.name} />
-                                                    </div>
-                                                    <div className="item-info">
-                                                        <h3>{item.name}</h3>
-                                                        <p>{item.qty} x {formatPrice(item.price)}</p>
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                        <div className="order-footer">
-                                            <div className="order-total">
-                                                <span>Total:</span>
-                                                <span className="total-price">{formatPrice(order.total)}</span>
-                                            </div>
-                                            <Link href={`/orders/${order.id}`} className="detail-btn">
-                                                <span>Detail</span>
-                                                <ChevronRight size={16} />
-                                            </Link>
-                                        </div>
-                                    </div>
-                                )
-                            })
-                        ) : (
-                            <div className="empty-state">
-                                <Package size={64} />
-                                <h2>Belum Ada Pesanan</h2>
-                                <p>Pesanan Anda akan muncul di sini</p>
-                                <Link href="/products" className="btn btn-primary">
-                                    Mulai Belanja
-                                </Link>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            </main>
-            <Footer />
-            <MobileNav />
-
-            <style jsx>{`
+      <style jsx>{`
         .main-content {
           background: var(--bg-secondary);
           min-height: 100vh;
@@ -352,6 +358,6 @@ export default function OrdersPage() {
           margin-bottom: var(--space-6);
         }
       `}</style>
-        </>
-    )
+    </>
+  )
 }

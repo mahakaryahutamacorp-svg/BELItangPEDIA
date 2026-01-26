@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import {
     ArrowLeft,
@@ -14,7 +15,8 @@ import {
     ChevronRight,
     Phone,
     MapPin,
-    Filter
+    Filter,
+    Plus
 } from 'lucide-react'
 import { useAuth } from '@/components/providers/AuthProvider'
 import { useStoreStore } from '@/store/storeStore'
@@ -325,7 +327,14 @@ export default function SellerOrdersPage() {
                                     {order.items?.slice(0, 2).map((item) => (
                                         <div key={item.id} className="item-preview">
                                             {item.product?.images?.[0] && (
-                                                <img src={item.product.images[0]} alt="" />
+                                                <div style={{ position: 'relative', width: '40px', height: '40px', borderRadius: 'var(--radius-md)', overflow: 'hidden', flexShrink: 0 }}>
+                                                    <Image
+                                                        src={item.product.images[0]}
+                                                        alt=""
+                                                        fill
+                                                        style={{ objectFit: 'cover' }}
+                                                    />
+                                                </div>
                                             )}
                                             <div className="item-info">
                                                 <span className="item-name">{item.product?.name || 'Produk'}</span>

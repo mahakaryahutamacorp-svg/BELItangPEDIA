@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import {
   LayoutDashboard,
@@ -241,7 +242,7 @@ export default function SellerDashboard() {
             <span className="logo-icon">🛒</span>
             <span className="logo-text">Seller Center</span>
           </Link>
-          <button className="sidebar-close" onClick={() => setSidebarOpen(false)}>
+          <button className="sidebar-close" onClick={() => setSidebarOpen(false)} aria-label="Tutup sidebar">
             <X size={24} />
           </button>
         </div>
@@ -274,7 +275,14 @@ export default function SellerDashboard() {
 
         <div className="sidebar-store">
           {store.logo_url ? (
-            <img src={store.logo_url} alt={store.name} className="store-logo" />
+            <div style={{ position: 'relative', width: '40px', height: '40px', borderRadius: 'var(--radius-md)', overflow: 'hidden', flexShrink: 0 }}>
+              <Image
+                src={store.logo_url}
+                alt={store.name}
+                fill
+                style={{ objectFit: 'cover' }}
+              />
+            </div>
           ) : (
             <div className="store-logo-placeholder">
               <Store size={20} />
@@ -292,7 +300,7 @@ export default function SellerDashboard() {
       {/* Main Content */}
       <main className="main-content">
         <header className="top-bar">
-          <button className="menu-toggle" onClick={() => setSidebarOpen(true)}>
+          <button className="menu-toggle" onClick={() => setSidebarOpen(true)} aria-label="Buka menu">
             <Menu size={24} />
           </button>
           <h1>Dashboard</h1>
@@ -381,13 +389,20 @@ export default function SellerDashboard() {
                 products.map((product, index) => (
                   <div key={product.id} className="product-item">
                     <span className="product-rank">#{index + 1}</span>
-                    {product.images?.[0] ? (
-                      <img src={product.images[0]} alt={product.name} />
-                    ) : (
-                      <div className="no-image">
-                        <Package size={16} />
-                      </div>
-                    )}
+                    <div style={{ position: 'relative', width: '48px', height: '48px', borderRadius: 'var(--radius-md)', overflow: 'hidden', flexShrink: 0 }}>
+                      {product.images?.[0] ? (
+                        <Image
+                          src={product.images[0]}
+                          alt={product.name}
+                          fill
+                          style={{ objectFit: 'cover' }}
+                        />
+                      ) : (
+                        <div className="no-image">
+                          <Package size={16} />
+                        </div>
+                      )}
+                    </div>
                     <div className="product-info">
                       <strong>{product.name}</strong>
                       <span>{formatPrice(product.discount_price || product.price)}</span>

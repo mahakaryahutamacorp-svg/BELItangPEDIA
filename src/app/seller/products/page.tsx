@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import {
     ArrowLeft,
@@ -145,7 +146,7 @@ export default function SellerProductsPage() {
             {/* Header */}
             <header className="page-header">
                 <div className="header-left">
-                    <Link href="/seller" className="back-btn">
+                    <Link href="/seller" className="back-btn" aria-label="Kembali ke Dashboard">
                         <ArrowLeft size={20} />
                     </Link>
                     <div>
@@ -198,9 +199,14 @@ export default function SellerProductsPage() {
                 ) : (
                     products.map((product) => (
                         <div key={product.id} className={`product-card ${!product.is_active ? 'inactive' : ''}`}>
-                            <div className="product-image">
+                            <div className="product-image" style={{ position: 'relative', width: '80px', height: '80px', borderRadius: 'var(--radius-md)', overflow: 'hidden', flexShrink: 0 }}>
                                 {product.images && product.images.length > 0 ? (
-                                    <img src={product.images[0]} alt={product.name} />
+                                    <Image
+                                        src={product.images[0]}
+                                        alt={product.name}
+                                        fill
+                                        style={{ objectFit: 'cover' }}
+                                    />
                                 ) : (
                                     <div className="no-image">
                                         <ImageIcon size={24} />
