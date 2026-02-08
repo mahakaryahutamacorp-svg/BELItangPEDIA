@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import {
   ChevronRight,
   MapPin,
@@ -191,7 +192,14 @@ export default function CheckoutPage() {
                     <div className="order-items">
                       {storeItems.map((item) => (
                         <div key={`${item.product.id}-${JSON.stringify(item.selectedVariant)}`} className="order-item">
-                          <img src={item.product.images[0]} alt={item.product.name} />
+                          <div style={{ position: 'relative', width: '64px', height: '64px', borderRadius: 'var(--radius-md)', overflow: 'hidden', flexShrink: 0 }}>
+                            <Image
+                              src={item.product.images[0]}
+                              alt={item.product.name}
+                              fill
+                              style={{ objectFit: 'cover' }}
+                            />
+                          </div>
                           <div className="item-info">
                             <span className="item-name">{item.product.name}</span>
                             {item.selectedVariant && (

@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowLeft, Heart, Trash2, ShoppingCart } from 'lucide-react'
 import { useState } from 'react'
 import Header from '@/components/layout/Header'
@@ -59,7 +60,14 @@ export default function WishlistPage() {
               {wishlistItems.map((item) => (
                 <div key={item.id} className="wishlist-item">
                   <div className="item-image">
-                    <img src={item.images[0] || ''} alt={item.name} />
+                    <div style={{ position: 'relative', width: '80px', height: '80px', borderRadius: 'var(--radius-md)', overflow: 'hidden', flexShrink: 0 }}>
+                      <Image
+                        src={item.images[0] || ''}
+                        alt={item.name}
+                        fill
+                        style={{ objectFit: 'cover' }}
+                      />
+                    </div>
                   </div>
                   <div className="item-info">
                     <h3>{item.name}</h3>

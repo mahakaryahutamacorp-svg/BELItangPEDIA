@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
+import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/store/authStore'
 
@@ -32,6 +32,63 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [loading, setLoading] = useState(true)
     const { setUser: setStoreUser, logout: storeLogout } = useAuthStore()
 
+    const fetchUserProfile = useCallback(async (userId: string) => {
+        try {
+            const { data, error } = await supabase
+                .from('users')
+                .select('*')
+                .eq('id', userId)
+                .single()
+
+            if (error || !data) {
+                // Profile doesn't exist, get email from auth and create basic profile
+                const { data: authData } = await supabase.auth.getUser()
+                if (authData?.user) {
+                    const basicProfile = {
+                        id: authData.user.id,
+                        email: authData.user.email || '',
+                        full_name: authData.user.user_metadata?.full_name || authData.user.email?.split('@')[0] || '',
+                        phone: authData.user.user_metadata?.phone || '',
+                        avatar_url: null,
+                        role: 'buyer' as const,
+                        created_at: new Date().toISOString(),
+                    }
+
+                    // Set basic user info in store
+                    setStoreUser(basicProfile)
+
+                    // Try to create profile in database
+                    const { error: insertError } = await (supabase.from('users') as any).insert({
+                        id: authData.user.id,
+                        email: authData.user.email,
+                        full_name: basicProfile.full_name,
+                        phone: basicProfile.phone,
+                        role: 'buyer',
+                    })
+
+                    if (insertError) {
+                        console.error('Could not auto-create profile in database:', insertError)
+                    }
+                }
+                return
+            }
+
+            // profile exists in database, update store
+            const profile = data as any
+            setStoreUser({
+                id: profile.id,
+                email: profile.email || '',
+                full_name: profile.full_name || profile.name || '',
+                phone: profile.phone || '',
+                avatar_url: profile.avatar_url || null,
+                role: (profile.role as 'buyer' | 'seller' | 'admin') || 'buyer',
+                created_at: profile.created_at || new Date().toISOString(),
+            })
+        } catch (err) {
+            console.error('Error fetching profile:', err)
+        }
+    }, [setStoreUser])
+
     useEffect(() => {
         // Get initial session
         const getSession = async () => {
@@ -50,9 +107,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const { data: { subscription } } = supabase.auth.onAuthStateChange(
             async (_event: string, currentSession: SupabaseSession | null) => {
                 if (currentSession) {
-                    setSession(currentSession)
-                    setUser(currentSession.user)
-                    if (_event === 'SIGNED_IN') {
+                    setSession(currentSession as SupabaseSession)
+                    setUser(currentSession.user as SupabaseUser)
+                    if (_event === 'SIGNED_IN' || _event === 'INITIAL_SESSION') {
                         await fetchUserProfile(currentSession.user.id)
                     }
                 } else {
@@ -69,74 +126,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return () => {
             subscription.unsubscribe()
         }
-    }, [storeLogout])
-
-    const fetchUserProfile = async (userId: string) => {
-        try {
-            const { data, error } = await supabase
-                .from('users')
-                .select('*')
-                .eq('id', userId)
-                .single()
-
-            if (error || !data) {
-                // Profile doesn't exist, get email from auth and create basic profile
-                const { data: authData } = await supabase.auth.getUser()
-                if (authData?.user) {
-                    // Set basic user info from auth
-                    setStoreUser({
-                        id: authData.user.id,
-                        email: authData.user.email || '',
-                        full_name: authData.user.user_metadata?.full_name || authData.user.email?.split('@')[0] || '',
-                        phone: authData.user.user_metadata?.phone || '',
-                        avatar_url: null,
-                        role: 'buyer',
-                        created_at: new Date().toISOString(),
-                    })
-
-                    // Try to create profile in database
-                    try {
-                        await (supabase.from('users') as any).insert({
-                            id: authData.user.id,
-                            email: authData.user.email,
-                            full_name: authData.user.user_metadata?.full_name || authData.user.email?.split('@')[0],
-                            phone: authData.user.user_metadata?.phone || '',
-                            role: 'buyer',
-                        })
-                    } catch (insertError) {
-                        console.log('Could not auto-create profile:', insertError)
-                    }
-                }
-                return
-            }
-
-            // Cast to any to avoid TypeScript errors with Supabase types
-            const profile = data as {
-                id: string
-                email: string
-                full_name?: string
-                name?: string
-                phone: string
-                avatar_url: string | null
-                role: string
-                created_at: string
-            } | null
-
-            if (profile) {
-                setStoreUser({
-                    id: profile.id,
-                    email: profile.email || '',
-                    full_name: profile.full_name || profile.name || '',
-                    phone: profile.phone || '',
-                    avatar_url: profile.avatar_url || null,
-                    role: (profile.role as 'buyer' | 'seller' | 'admin') || 'buyer',
-                    created_at: profile.created_at || new Date().toISOString(),
-                })
-            }
-        } catch (err) {
-            console.error('Error fetching profile:', err)
-        }
-    }
+    }, [storeLogout, fetchUserProfile])
 
     const signInWithEmail = async (email: string, password: string) => {
         const { error } = await supabase.auth.signInWithPassword({
@@ -160,13 +150,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         if (!error && data.user) {
             // Create user profile in database
-            await (supabase.from('users') as any).insert({
+            const { error: profileError } = await (supabase.from('users') as any).insert({
                 id: data.user.id,
                 email: email,
                 full_name: fullName,
                 phone: phone,
                 role: 'buyer',
             })
+
+            if (profileError) {
+                console.error('Error creating profile after signup:', profileError)
+                // We don't return error here because the Auth account IS created.
+                // The fetchUserProfile self-healing will try again on next check.
+            }
         }
 
         return { error: error as Error | null }
