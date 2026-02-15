@@ -327,12 +327,12 @@ export default function SellerOrdersPage() {
                                     {order.items?.slice(0, 2).map((item) => (
                                         <div key={item.id} className="item-preview">
                                             {item.product?.images?.[0] && (
-                                                <div style={{ position: 'relative', width: '40px', height: '40px', borderRadius: 'var(--radius-md)', overflow: 'hidden', flexShrink: 0 }}>
+                                                <div className="item-preview-image-wrapper">
                                                     <Image
                                                         src={item.product.images[0]}
                                                         alt=""
                                                         fill
-                                                        style={{ objectFit: 'cover' }}
+                                                        className="item-preview-image"
                                                     />
                                                 </div>
                                             )}

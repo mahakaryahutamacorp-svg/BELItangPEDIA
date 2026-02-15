@@ -92,13 +92,13 @@ export default function ProfilePage() {
           {/* Profile Header */}
           <div className="profile-header">
             <div className="avatar-wrapper">
-              <div className="avatar" style={{ position: 'relative', width: '80px', height: '80px', borderRadius: 'var(--radius-full)', overflow: 'hidden' }}>
+              <div className="avatar-container">
                 {user?.avatar_url ? (
                   <Image
                     src={user.avatar_url}
                     alt={user.full_name}
                     fill
-                    style={{ objectFit: 'cover' }}
+                    className="avatar-image"
                   />
                 ) : (
                   <User size={40} />
@@ -314,6 +314,18 @@ export default function ProfilePage() {
           border-radius: var(--radius-xl);
           color: var(--accent-red);
           font-weight: 500;
+        }
+
+        .avatar-container {
+          position: relative;
+          width: 80px;
+          height: 80px;
+          border-radius: var(--radius-full);
+          overflow: hidden;
+        }
+
+        .avatar-image {
+          object-fit: cover;
         }
       `}</style>
     </>

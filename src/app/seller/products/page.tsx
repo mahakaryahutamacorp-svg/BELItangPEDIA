@@ -199,13 +199,13 @@ export default function SellerProductsPage() {
                 ) : (
                     products.map((product) => (
                         <div key={product.id} className={`product-card ${!product.is_active ? 'inactive' : ''}`}>
-                            <div className="product-image" style={{ position: 'relative', width: '80px', height: '80px', borderRadius: 'var(--radius-md)', overflow: 'hidden', flexShrink: 0 }}>
+                            <div className="product-image-container">
                                 {product.images && product.images.length > 0 ? (
                                     <Image
                                         src={product.images[0]}
                                         alt={product.name}
                                         fill
-                                        style={{ objectFit: 'cover' }}
+                                        className="product-image"
                                     />
                                 ) : (
                                     <div className="no-image">
@@ -510,6 +510,19 @@ export default function SellerProductsPage() {
 
                 .action-btn.delete:hover {
                     background: #fee2e2;
+                }
+
+                .product-image-container {
+                    position: relative;
+                    width: 80px;
+                    height: 80px;
+                    border-radius: var(--radius-md);
+                    overflow: hidden;
+                    flex-shrink: 0;
+                }
+
+                .product-image {
+                    object-fit: cover;
                 }
             `}</style>
         </div>

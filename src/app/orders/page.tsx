@@ -123,12 +123,12 @@ export default function OrdersPage() {
                     <div className="order-items">
                       {order.items.map((item, idx) => (
                         <div key={idx} className="order-item">
-                          <div className="item-image" style={{ position: 'relative', width: '60px', height: '60px' }}>
+                          <div className="item-image-wrapper">
                             <Image
                               src={item.image}
                               alt={item.name}
                               fill
-                              style={{ objectFit: 'cover' }}
+                              className="item-image"
                             />
                           </div>
                           <div className="item-info">
@@ -356,6 +356,16 @@ export default function OrdersPage() {
         .empty-state p {
           color: var(--text-tertiary);
           margin-bottom: var(--space-6);
+        }
+
+        .item-image-wrapper {
+          position: relative;
+          width: 60px;
+          height: 60px;
+        }
+
+        .item-image {
+          object-fit: cover;
         }
       `}</style>
     </>

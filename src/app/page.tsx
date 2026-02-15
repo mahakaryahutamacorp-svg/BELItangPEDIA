@@ -560,21 +560,62 @@ function HomePageSkeleton() {
   return (
     <>
       <Header />
-      <main style={{ background: 'var(--bg-secondary)', minHeight: '100vh' }}>
-        <div className="container" style={{ padding: 'var(--space-4)' }}>
-          <div className="skeleton" style={{ height: '150px', borderRadius: 'var(--radius-xl)', marginBottom: 'var(--space-4)' }} />
-          <div style={{ display: 'flex', gap: 'var(--space-3)', marginBottom: 'var(--space-4)' }}>
+      <main className="skeleton-main">
+        <div className="container skeleton-container">
+          <div className="skeleton banner-skeleton" />
+          <div className="skeleton-categories">
             {[1, 2, 3, 4, 5].map(i => (
-              <div key={i} className="skeleton" style={{ width: '60px', height: '60px', borderRadius: 'var(--radius-xl)', flexShrink: 0 }} />
+              <div key={i} className="skeleton category-skeleton" />
             ))}
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 'var(--space-3)' }}>
+          <div className="skeleton-grid">
             {[1, 2, 3, 4].map(i => (
-              <div key={i} className="skeleton" style={{ height: '200px', borderRadius: 'var(--radius-xl)' }} />
+              <div key={i} className="skeleton product-skeleton" />
             ))}
           </div>
         </div>
       </main>
+
+      <style jsx>{`
+        .skeleton-main {
+          background: var(--bg-secondary);
+          min-height: 100vh;
+        }
+
+        .skeleton-container {
+          padding: var(--space-4);
+        }
+
+        .banner-skeleton {
+          height: 150px;
+          border-radius: var(--radius-xl);
+          margin-bottom: var(--space-4);
+        }
+
+        .skeleton-categories {
+          display: flex;
+          gap: var(--space-3);
+          margin-bottom: var(--space-4);
+        }
+
+        .category-skeleton {
+          width: 60px;
+          height: 60px;
+          border-radius: var(--radius-xl);
+          flex-shrink: 0;
+        }
+
+        .skeleton-grid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: var(--space-3);
+        }
+
+        .product-skeleton {
+          height: 200px;
+          border-radius: var(--radius-xl);
+        }
+      `}</style>
     </>
   )
 }

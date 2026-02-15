@@ -192,12 +192,12 @@ export default function CheckoutPage() {
                     <div className="order-items">
                       {storeItems.map((item) => (
                         <div key={`${item.product.id}-${JSON.stringify(item.selectedVariant)}`} className="order-item">
-                          <div style={{ position: 'relative', width: '64px', height: '64px', borderRadius: 'var(--radius-md)', overflow: 'hidden', flexShrink: 0 }}>
+                          <div className="item-image-wrapper">
                             <Image
                               src={item.product.images[0]}
                               alt={item.product.name}
                               fill
-                              style={{ objectFit: 'cover' }}
+                              className="item-image"
                             />
                           </div>
                           <div className="item-info">
@@ -627,6 +627,19 @@ export default function CheckoutPage() {
         .empty-cart {
           text-align: center;
           padding: var(--space-16);
+        }
+
+        .item-image-wrapper {
+          position: relative;
+          width: 64px;
+          height: 64px;
+          border-radius: var(--radius-md);
+          overflow: hidden;
+          flex-shrink: 0;
+        }
+
+        .item-image {
+          object-fit: cover;
         }
       `}</style>
     </>

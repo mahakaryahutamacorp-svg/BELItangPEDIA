@@ -75,12 +75,12 @@ export default function ProductDetailPage() {
           <div className="product-layout">
             {/* Image Gallery */}
             <div className="product-gallery">
-              <div className="main-image" style={{ position: 'relative', aspectRatio: '1', borderRadius: 'var(--radius-lg)', overflow: 'hidden' }}>
+              <div className="main-image-wrapper">
                 <Image
                   src={product.images[selectedImage]}
                   alt={product.name}
                   fill
-                  style={{ objectFit: 'cover' }}
+                  className="product-main-image-gallery"
                   priority
                 />
                 {hasDiscount && (
@@ -96,13 +96,14 @@ export default function ProductDetailPage() {
                     className={`thumbnail ${selectedImage === index ? 'active' : ''}`}
                     onClick={() => setSelectedImage(index)}
                     aria-label={`Lihat gambar ${index + 1}`}
+                    title={`Lihat gambar ${index + 1}`}
                   >
-                    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+                    <div className="thumbnail-image-wrapper">
                       <Image
                         src={image}
                         alt={`${product.name} ${index + 1}`}
                         fill
-                        style={{ objectFit: 'cover' }}
+                        className="thumbnail-image"
                       />
                     </div>
                   </button>
@@ -209,7 +210,11 @@ export default function ProductDetailPage() {
                   <MessageCircle size={20} />
                   Chat
                 </button>
-                <button className="btn-wishlist">
+                <button
+                  className="btn-wishlist"
+                  aria-label="Tambah ke Wishlist"
+                  title="Tambah ke Wishlist"
+                >
                   <Heart size={20} />
                 </button>
                 <button className="btn-cart" onClick={handleAddToCart}>
@@ -226,12 +231,12 @@ export default function ProductDetailPage() {
             <div className="store-card">
               {product.store && (
                 <Link href={`/store/${product.store.id}`} className="store-link">
-                  <div style={{ position: 'relative', width: '56px', height: '56px', borderRadius: 'var(--radius-lg)', overflow: 'hidden', flexShrink: 0 }}>
+                  <div className="store-logo-wrapper">
                     <Image
                       src={product.store.logo_url || ''}
                       alt={product.store.name}
                       fill
-                      style={{ objectFit: 'cover' }}
+                      className="store-logo"
                     />
                   </div>
                   <div className="store-info">
@@ -854,6 +859,50 @@ export default function ProductDetailPage() {
           .products-grid {
             grid-template-columns: repeat(4, 1fr);
           }
+        }
+
+        .product-image-inner {
+          position: relative;
+          height: 100%;
+          width: 100%;
+        }
+
+        .product-main-image {
+          object-fit: cover;
+        }
+
+        .store-logo-wrapper {
+          position: relative;
+          width: 56px;
+          height: 56px;
+          border-radius: var(--radius-lg);
+          overflow: hidden;
+          flex-shrink: 0;
+        }
+
+        .store-logo {
+          object-fit: cover;
+        }
+
+        .main-image-wrapper {
+          position: relative;
+          aspect-ratio: 1;
+          border-radius: var(--radius-lg);
+          overflow: hidden;
+        }
+
+        .product-main-image-gallery {
+          object-fit: cover;
+        }
+
+        .thumbnail-image-wrapper {
+          position: relative;
+          width: 100%;
+          height: 100%;
+        }
+
+        .thumbnail-image {
+          object-fit: cover;
         }
       `}</style>
     </>

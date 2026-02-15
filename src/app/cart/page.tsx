@@ -117,6 +117,8 @@ export default function CartPage() {
                                       item.selectedVariant
                                     )}
                                     disabled={item.quantity <= 1}
+                                    aria-label="Kurangi jumlah"
+                                    title="Kurangi jumlah"
                                   >
                                     <Minus size={14} />
                                   </button>

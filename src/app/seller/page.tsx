@@ -275,12 +275,12 @@ export default function SellerDashboard() {
 
         <div className="sidebar-store">
           {store.logo_url ? (
-            <div style={{ position: 'relative', width: '40px', height: '40px', borderRadius: 'var(--radius-md)', overflow: 'hidden', flexShrink: 0 }}>
+            <div className="store-logo-wrapper">
               <Image
                 src={store.logo_url}
                 alt={store.name}
                 fill
-                style={{ objectFit: 'cover' }}
+                className="store-logo"
               />
             </div>
           ) : (
@@ -389,13 +389,13 @@ export default function SellerDashboard() {
                 products.map((product, index) => (
                   <div key={product.id} className="product-item">
                     <span className="product-rank">#{index + 1}</span>
-                    <div style={{ position: 'relative', width: '48px', height: '48px', borderRadius: 'var(--radius-md)', overflow: 'hidden', flexShrink: 0 }}>
+                    <div className="product-image-wrapper">
                       {product.images?.[0] ? (
                         <Image
                           src={product.images[0]}
                           alt={product.name}
                           fill
-                          style={{ objectFit: 'cover' }}
+                          className="product-image"
                         />
                       ) : (
                         <div className="no-image">
@@ -927,6 +927,32 @@ export default function SellerDashboard() {
           background: white;
           color: var(--secondary-700);
           border: none;
+        }
+
+        .store-logo-wrapper {
+          position: relative;
+          width: 40px;
+          height: 40px;
+          border-radius: var(--radius-md);
+          overflow: hidden;
+          flex-shrink: 0;
+        }
+
+        .store-logo {
+          object-fit: cover;
+        }
+
+        .product-image-wrapper {
+          position: relative;
+          width: 48px;
+          height: 48px;
+          border-radius: var(--radius-md);
+          overflow: hidden;
+          flex-shrink: 0;
+        }
+
+        .product-image {
+          object-fit: cover;
         }
       `}</style>
     </div>
