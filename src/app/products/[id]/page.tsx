@@ -152,6 +152,8 @@ export default function ProductDetailPage() {
                           ...prev,
                           [variant.name]: option.value
                         }))}
+                        aria-label={`Pilih varian ${option.value}`}
+                        title={`Pilih varian ${option.value}`}
                       >
                         {option.value}
                       </button>
@@ -167,6 +169,8 @@ export default function ProductDetailPage() {
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
                     disabled={quantity <= 1}
+                    aria-label="Kurangi jumlah"
+                    title="Kurangi jumlah"
                   >
                     <Minus size={16} />
                   </button>
@@ -174,6 +178,8 @@ export default function ProductDetailPage() {
                   <button
                     onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
                     disabled={quantity >= product.stock}
+                    aria-label="Tambah jumlah"
+                    title="Tambah jumlah"
                   >
                     <Plus size={16} />
                   </button>
@@ -206,7 +212,7 @@ export default function ProductDetailPage() {
 
               {/* Actions */}
               <div className="product-actions">
-                <button className="btn-chat">
+                <button className="btn-chat" aria-label="Chat dengan Penjual" title="Chat dengan Penjual">
                   <MessageCircle size={20} />
                   Chat
                 </button>
@@ -217,11 +223,11 @@ export default function ProductDetailPage() {
                 >
                   <Heart size={20} />
                 </button>
-                <button className="btn-cart" onClick={handleAddToCart}>
+                <button className="btn-cart" onClick={handleAddToCart} aria-label="Tambah ke Keranjang" title="Tambah ke Keranjang">
                   <ShoppingCart size={20} />
                   Keranjang
                 </button>
-                <button className="btn-buy" onClick={handleBuyNow}>
+                <button className="btn-buy" onClick={handleBuyNow} aria-label="Beli Sekarang" title="Beli Sekarang">
                   Beli Sekarang
                 </button>
               </div>
@@ -249,7 +255,7 @@ export default function ProductDetailPage() {
                       {product.store.rating} • {product.store.distance} km
                     </p>
                   </div>
-                  <button className="btn-visit">
+                  <button className="btn-visit" aria-label="Kunjungi Toko" title="Kunjungi Toko">
                     <Store size={16} />
                     Kunjungi
                   </button>
